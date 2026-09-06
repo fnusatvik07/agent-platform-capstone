@@ -233,6 +233,13 @@ can produce agents shaped like this, and not just simple ones.
 | **3. A design document** | One or two pages: how you made each rule true, and what you would do differently with another month. |
 | **4. The multi-agent demo agent** | Built through your own platform. |
 
+### Teams and dates
+
+- **Groups of four only.** Not three, not five.
+- **Register by DMing your team name and the four members.** Unregistered teams are not assessed.
+- **You have two weeks. The submission deadline is 20 September.**
+- **Presentations start 21 September.**
+
 ### The presentation
 
 You will present your work **live for 45 minutes**. Plan for roughly:

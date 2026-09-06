@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; }
+  body {
+    background:#faf9f7; color:#191917;
+    font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    position:relative;
+  }
+
+  /* right-hand UI fragment, tilted */
+  .fragment {
+    position:absolute; right:56px; top:196px; width:812px;
+    transform: rotate(-5.5deg); transform-origin: center;
+  }
+  .panel {
+    background:#fff; border:3px solid #15544e; border-radius:20px; overflow:hidden;
+    box-shadow: 0 40px 90px rgba(25,25,23,.13), 0 8px 22px rgba(25,25,23,.07);
+  }
+  .ph {
+    background:#e9f0ee; color:#15544e; padding:16px 28px;
+    font-size:22px; font-weight:750; letter-spacing:.11em; text-transform:uppercase;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .pb { padding:24px 28px; }
+  .pick { display:flex; align-items:center; gap:20px; padding:17px 22px;
+          border:2px solid #e5e3dd; border-radius:14px; margin-bottom:14px; }
+  .pick.on { border-color:#15544e; background:#f5f8f7; }
+  .box { width:32px; height:32px; flex:0 0 32px; border-radius:8px; border:3px solid #d0ccc4;
+         background:#fff; display:grid; place-items:center; color:#fff; font-size:19px; font-weight:900; }
+  .pick.on .box { background:#15544e; border-color:#15544e; }
+  .nm { font-size:31px; font-weight:660; }
+  .sb { font-size:23px; color:#6b6862; margin-top:2px; }
+  .tag { border-radius:999px; padding:4px 15px; font-size:19px; font-weight:680; margin-left:12px; }
+  .tag.ok { background:#eef4ee; color:#2f6b3c; }
+  .tag.no { background:#fbf1f0; color:#b3261e; }
+
+  /* left-hand type */
+  .left { position:absolute; left:104px; top:0; bottom:0; width:1000px;
+          display:flex; flex-direction:column; justify-content:center; }
+  .eyebrow { display:flex; align-items:center; gap:18px; margin-bottom:40px; }
+  .mark { width:56px; height:56px; border-radius:15px; background:#23231f; color:#fdfdfc;
+          display:grid; place-items:center; font-size:28px; font-weight:800; }
+  .ename { font-size:27px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:#6b6862; }
+
+  h1 { font-size:112px; font-weight:700; letter-spacing:-.038em; line-height:1.02; }
+  h1 .g { color:#6b6862; }
+  h1 .t { color:#15544e; }
+  .rule { width:340px; height:9px; background:#15544e; border-radius:5px; margin:34px 0 32px; }
+
+  .meta { display:flex; align-items:center; gap:18px; }
+  .pill { border:2px solid #d0ccc4; border-radius:999px; padding:11px 26px;
+          font-size:26px; font-weight:640; color:#191917; background:#fff; }
+  .pill.solid { background:#23231f; border-color:#23231f; color:#fdfdfc; }
+
+  .corner {
+    position:absolute; left:104px; bottom:64px;
+    font-size:24px; color:#6b6862; font-weight:550; letter-spacing:.01em;
+  }
+</style>
+</head>
+<body>
+
+  <div class="fragment">
+    <div class="panel">
+      <div class="ph"><span>Paused · waiting for you</span><span>interrupt</span></div>
+      <div class="pb">
+        <div class="pick on">
+          <div class="box">✓</div>
+          <div><div class="nm">github <span class="tag ok">connected</span></div>
+               <div class="sb">list_issues, get_issue — read only</div></div>
+        </div>
+        <div class="pick on">
+          <div class="box">✓</div>
+          <div><div class="nm">slack <span class="tag no">not connected</span></div>
+               <div class="sb">post_message — will ask before posting</div></div>
+        </div>
+        <div class="pick">
+          <div class="box"></div>
+          <div><div class="nm">jira</div>
+               <div class="sb">search_issues, create_issue</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="left">
+    <div class="eyebrow">
+      <span class="mark">F</span>
+      <span class="ename">Data Sense &nbsp;·&nbsp; Agent Builder</span>
+    </div>
+
+    <h1>Build the thing<br><span class="g">that builds</span><br><span class="t">agents.</span></h1>
+
+    <div class="rule"></div>
+
+    <div class="meta">
+      <span class="pill solid">Capstone project</span>
+      <span class="pill">3 min brief</span>
+      <span class="pill">Teams of 4</span>
+    </div>
+  </div>
+
+  <div class="corner">LangChain &nbsp;·&nbsp; LangGraph &nbsp;·&nbsp; MCP &nbsp;·&nbsp; multi-tenant &nbsp;·&nbsp; human-in-the-loop</div>
+
+</body>
+</html>
