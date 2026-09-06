@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 92px 130px;
+    }
+    .kicker { font-size: 21px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #6b6862; }
+    .head { font-size: 58px; font-weight: 660; letter-spacing: -.024em; margin-top: 10px; }
+
+    .tabs { position: absolute; left: 130px; right: 130px; top: 268px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .tab { background: #fff; border: 1px solid #e5e3dd; border-radius: 16px; padding: 30px 32px 32px; }
+    .tab .ic {
+      width: 46px; height: 46px; border-radius: 12px; background: #e9f0ee; color: #15544e;
+      display: grid; place-items: center; font-size: 22px; margin-bottom: 18px;
+    }
+    .tab .t { font-size: 30px; font-weight: 650; letter-spacing: -.012em; }
+    .tab .d { font-size: 21px; color: #6b6862; line-height: 1.45; margin-top: 8px; }
+
+    .also {
+      position: absolute; left: 130px; right: 130px; top: 590px;
+      display: flex; gap: 14px; align-items: center; font-size: 22px; color: #6b6862;
+    }
+    .pill { background: #fff; border: 1px solid #e5e3dd; border-radius: 999px; padding: 9px 20px; font-weight: 550; color: #191917; }
+
+    .steps { position: absolute; left: 130px; right: 130px; bottom: 168px; }
+    .slab { font-size: 20px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; color: #6b6862; margin-bottom: 20px; }
+    .track { display: flex; align-items: stretch; gap: 0; }
+    .st { flex: 1; position: relative; padding-right: 18px; }
+    .st .n {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 16px; font-weight: 700; color: #15544e; letter-spacing: .06em;
+    }
+    .st .l { font-size: 23px; font-weight: 600; margin-top: 6px; letter-spacing: -.008em; }
+    .bar { position: absolute; left: 0; right: 0; bottom: -18px; height: 3px; background: #e5e3dd; border-radius: 2px; }
+    .fill { position: absolute; left: 0; bottom: -18px; height: 3px; background: #15544e; border-radius: 2px; width: 0; }
+  </style>
+
+  <div id="root" data-composition-id="s03-shape" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick">What you build</div>
+    <div class="head" id="head">Three tabs. That is the whole product.</div>
+
+    <div class="tabs">
+      <div class="tab tb">
+        <div class="ic">⛁</div>
+        <div class="t">MCP Registry</div>
+        <div class="d">Register tool servers.<br>Connect once with your credentials.</div>
+      </div>
+      <div class="tab tb">
+        <div class="ic">✦</div>
+        <div class="t">Build</div>
+        <div class="d">Chat to describe an agent.<br>The platform assembles it.</div>
+      </div>
+      <div class="tab tb">
+        <div class="ic">◧</div>
+        <div class="t">My Agents</div>
+        <div class="d">Your agents as cards.<br>Test them, then publish them.</div>
+      </div>
+    </div>
+
+    <div class="also" id="also">
+      <span>plus</span>
+      <span class="pill">Marketplace</span>
+      <span>and</span>
+      <span class="pill">Admin Review</span>
+      <span>guarding the door to it</span>
+    </div>
+
+    <div class="steps">
+      <div class="slab" id="slab">Six steps, end to end</div>
+      <div class="track">
+        <div class="st sx"><div class="n">01</div><div class="l">Register</div></div>
+        <div class="st sx"><div class="n">02</div><div class="l">Connect</div></div>
+        <div class="st sx"><div class="n">03</div><div class="l">Describe</div></div>
+        <div class="st sx"><div class="n">04</div><div class="l">Test</div></div>
+        <div class="st sx"><div class="n">05</div><div class="l">Publish</div></div>
+        <div class="st sx"><div class="n">06</div><div class="l">Install</div></div>
+        <div class="bar"></div>
+        <div class="fill" id="fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", ".tb", "#also", "#slab", ".sx"], { opacity: 0 });
+      gsap.set("#fill", { width: 0 });
+
+      tl.fromTo("#kick", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .5, ease: "power2.out" }, 0.2)
+        .fromTo("#head", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .65, ease: "power3.out" }, 0.4)
+        .fromTo(".tb", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .6, stagger: .5, ease: "power3.out" }, 1.2)
+        .fromTo("#also", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .55, ease: "power2.out" }, 5.6)
+        .fromTo("#slab", { opacity: 0 }, { opacity: 1, duration: .45, ease: "power2.out" }, 6.4)
+        .fromTo(".sx", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, stagger: .34, ease: "power2.out" }, 6.7)
+        .fromTo("#fill", { width: 0 }, { width: "100%", duration: 3.4, ease: "power2.inOut" }, 9.6)
+        .to("#root", { opacity: 0, duration: .5, ease: "power2.in" }, 15.4);
+
+      window.__timelines["s03-shape"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

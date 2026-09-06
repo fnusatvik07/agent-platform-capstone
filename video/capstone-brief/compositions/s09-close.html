@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 92px 130px;
+    }
+    .kicker { font-size: 20px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #6b6862; }
+    .head { font-size: 54px; font-weight: 660; letter-spacing: -.024em; margin-top: 8px; }
+
+    .two { position: absolute; left: 130px; right: 130px; top: 262px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .box { background: #fff; border: 1px solid #e5e3dd; border-radius: 16px; padding: 32px 34px; }
+    .box .lb { font-size: 19px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: #6b6862; }
+    .box .bt { font-size: 42px; font-weight: 660; letter-spacing: -.02em; margin-top: 12px; }
+    .box .bd { font-size: 23px; color: #6b6862; margin-top: 12px; line-height: 1.5; }
+    .box .bd b { color: #191917; }
+
+    .warn {
+      position: absolute; left: 130px; right: 130px; top: 604px;
+      background: #fbf1f0; border-left: 5px solid #b3261e; border-radius: 0 12px 12px 0;
+      padding: 20px 26px; font-size: 30px; font-weight: 620;
+    }
+    .warn b { color: #b3261e; }
+
+    .foot {
+      position: absolute; left: 130px; right: 130px; bottom: 86px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .url {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 30px; font-weight: 600; color: #15544e;
+    }
+    .urllab { font-size: 19px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: #6b6862; margin-bottom: 10px; }
+    .sig { display: flex; align-items: center; gap: 14px; font-size: 24px; color: #6b6862; font-weight: 550; }
+    .mark { width: 38px; height: 38px; border-radius: 10px; background: #23231f; color: #fdfdfc;
+            display: grid; place-items: center; font-size: 19px; font-weight: 700; }
+  </style>
+
+  <div id="root" data-composition-id="s09-close" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick">What you hand in</div>
+    <div class="head" id="head">A repository, and forty-five minutes.</div>
+
+    <div class="two">
+      <div class="box bx">
+        <div class="lb">Submit</div>
+        <div class="bt">A GitHub repository</div>
+        <div class="bd"><b>docker compose up</b> and it runs. A README that says how to start it and
+          how to log in. No paid accounts.</div>
+      </div>
+      <div class="box bx">
+        <div class="lb">Then present</div>
+        <div class="bt">45 minutes, live</div>
+        <div class="bd">Demo the flow, walk your design, and answer for the choices you made.</div>
+      </div>
+    </div>
+
+    <div class="warn" id="warn">Bring the running system. <b>Slides alone will not do.</b></div>
+
+    <div class="foot">
+      <div id="urlwrap">
+        <div class="urllab">Everything you need</div>
+        <div class="url">fnusatvik07.github.io/agent-platform-capstone</div>
+      </div>
+      <div class="sig" id="sig">
+        <span class="mark">F</span>
+        <span>Data Sense &nbsp;·&nbsp; Agent Builder Capstone</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", ".bx", "#warn", "#urlwrap", "#sig"], { opacity: 0 });
+
+      tl.fromTo("#kick", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45 }, 0.2)
+        .fromTo("#head", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .6, ease: "power3.out" }, 0.4)
+        .fromTo(".bx", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .55, stagger: .9, ease: "power3.out" }, 1.1)
+        .fromTo("#warn", { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: .5, ease: "power3.out" }, 5.4)
+        .fromTo("#urlwrap", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .55, ease: "power2.out" }, 7.8)
+        .fromTo("#sig", { opacity: 0 }, { opacity: 1, duration: .5 }, 8.4);
+
+      tl.to("#root", { opacity: 0, duration: .8, ease: "power2.in" }, 13.1);
+
+      window.__timelines["s09-close"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

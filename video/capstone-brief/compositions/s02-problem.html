@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 88px 130px;
+    }
+    .kicker {
+      font-size: 21px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase;
+      color: #6b6862; margin-bottom: 12px;
+    }
+    .head { font-size: 58px; font-weight: 660; letter-spacing: -.024em; line-height: 1.14; max-width: 1180px; }
+
+    .repos {
+      position: absolute; left: 130px; right: 130px; top: 292px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
+    }
+    .repo {
+      background: #fff; border: 1px solid #e5e3dd; border-radius: 14px; padding: 22px 24px;
+    }
+    .repo .rn {
+      font-size: 22px; font-weight: 640; margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .repo .team { font-size: 17px; color: #6b6862; font-weight: 500; }
+    .repo .f {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 17px; color: #6b6862; padding: 6px 0;
+      border-top: 1px solid #f0eee9; display: flex; justify-content: space-between;
+    }
+    .key {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fbf1f0; color: #b3261e; border-radius: 7px;
+      padding: 3px 9px; font-size: 15px; font-weight: 650;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+
+    .qwrap {
+      position: absolute; left: 130px; right: 130px; top: 356px;
+    }
+    .q {
+      font-size: 54px; font-weight: 600; letter-spacing: -.015em; color: #191917;
+      padding: 26px 0 26px 34px; border-left: 4px solid #15544e; margin-bottom: 26px;
+    }
+    .nobody {
+      display: inline-flex; align-items: center; gap: 14px;
+      background: #fbf1f0; border: 1px solid #efcdc9; border-radius: 12px;
+      padding: 18px 30px; font-size: 38px; font-weight: 650; color: #b3261e;
+      margin-top: 18px;
+    }
+
+    .resolve {
+      position: absolute; left: 130px; right: 130px; top: 400px;
+      font-size: 62px; font-weight: 660; letter-spacing: -.026em; line-height: 1.18;
+      max-width: 1330px;
+    }
+    .resolve b { color: #15544e; }
+  </style>
+
+  <div id="root" data-composition-id="s02-problem" data-width="1920" data-height="1080">
+
+    <div id="top">
+      <div class="kicker" id="kick">The problem</div>
+      <div class="head" id="head">Every team that wants an agent<br>writes it from scratch.</div>
+    </div>
+
+    <div class="repos" id="repos">
+      <div class="repo r">
+        <div class="rn">payments-agent <span class="team">Team A</span></div>
+        <div class="f"><span>graph.py</span><span>412 lines</span></div>
+        <div class="f"><span>tools.py</span><span class="key k">SLACK_TOKEN</span></div>
+      </div>
+      <div class="repo r">
+        <div class="rn">support-bot <span class="team">Team B</span></div>
+        <div class="f"><span>graph.py</span><span>438 lines</span></div>
+        <div class="f"><span>tools.py</span><span class="key k">GITHUB_PAT</span></div>
+      </div>
+      <div class="repo r">
+        <div class="rn">ops-helper <span class="team">Team C</span></div>
+        <div class="f"><span>graph.py</span><span>401 lines</span></div>
+        <div class="f"><span>tools.py</span><span class="key k">JIRA_KEY</span></div>
+      </div>
+      <div class="repo r">
+        <div class="rn">hr-onboarding <span class="team">Team D</span></div>
+        <div class="f"><span>graph.py</span><span>429 lines</span></div>
+        <div class="f"><span>tools.py</span><span class="key k">SLACK_TOKEN</span></div>
+      </div>
+      <div class="repo r">
+        <div class="rn">finance-recon <span class="team">Team E</span></div>
+        <div class="f"><span>graph.py</span><span>455 lines</span></div>
+        <div class="f"><span>tools.py</span><span class="key k">DB_PASSWORD</span></div>
+      </div>
+      <div class="repo r">
+        <div class="rn">docs-watcher <span class="team">Team F</span></div>
+        <div class="f"><span>graph.py</span><span>398 lines</span></div>
+        <div class="f"><span>tools.py</span><span class="key k">GITHUB_PAT</span></div>
+      </div>
+    </div>
+
+    <div class="qwrap" id="qwrap" style="opacity:0">
+      <div class="q" id="q1">What agents are running here?</div>
+      <div class="q" id="q2">And what are they allowed to touch?</div>
+      <div class="nobody" id="nob">Nobody can answer</div>
+    </div>
+
+    <div class="resolve" id="res" style="opacity:0">
+      You are building the platform<br>that <b>answers both.</b>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", ".r", ".k"], { opacity: 0 });
+
+      tl.fromTo("#kick", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .5, ease: "power2.out" }, 0.2)
+        .fromTo("#head", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .7, ease: "power3.out" }, 0.45);
+
+      // the same work, six times over
+      tl.fromTo(".r",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: .55, stagger: .28, ease: "power2.out" }, 2.2);
+
+      // and the keys, hardcoded in every one
+      tl.fromTo(".k",
+        { opacity: 0, scale: .86 },
+        { opacity: 1, scale: 1, duration: .38, stagger: .12, ease: "back.out(2.2)" }, 6.4);
+
+      // clear the board for the two questions
+      tl.to("#repos", { opacity: 0, y: -18, duration: .6, ease: "power2.in" }, 10.4)
+        .to("#head",  { opacity: 0, y: -14, duration: .5, ease: "power2.in" }, 10.4)
+        .to("#kick",  { opacity: 0, duration: .4 }, 10.4)
+        .set("#qwrap", { opacity: 1 }, 11.0)
+        .fromTo("#q1", { opacity: 0, x: -26 }, { opacity: 1, x: 0, duration: .6, ease: "power3.out" }, 11.1)
+        .fromTo("#q2", { opacity: 0, x: -26 }, { opacity: 1, x: 0, duration: .6, ease: "power3.out" }, 12.0)
+        .fromTo("#nob", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .5, ease: "power2.out" }, 14.2);
+
+      // resolve
+      tl.to("#qwrap", { opacity: 0, y: -20, duration: .6, ease: "power2.in" }, 18.6)
+        .set("#res", { opacity: 1 }, 19.3)
+        .fromTo("#res", { y: 22 }, { y: 0, duration: .8, ease: "power3.out" }, 19.3)
+        .to("#root", { opacity: 0, duration: .55, ease: "power2.in" }, 24.9);
+
+      window.__timelines["s02-problem"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

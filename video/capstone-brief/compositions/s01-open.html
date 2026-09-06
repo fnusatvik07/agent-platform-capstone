@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0;
+      background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 168px;
+    }
+    .eyebrow {
+      display: flex; align-items: center; gap: 16px;
+      font-size: 22px; font-weight: 650; letter-spacing: .16em;
+      text-transform: uppercase; color: #6b6862; margin-bottom: 54px;
+    }
+    .mark {
+      width: 40px; height: 40px; border-radius: 11px; background: #23231f;
+      color: #fdfdfc; display: grid; place-items: center;
+      font-size: 21px; font-weight: 700; letter-spacing: 0;
+    }
+    .rule { flex: 1; height: 1px; background: #e5e3dd; margin-left: 10px; }
+    .line { font-size: 92px; font-weight: 660; letter-spacing: -.032em; line-height: 1.1; }
+    .l1 { color: #6b6862; margin-bottom: 14px; }
+    .l2 b { font-weight: 700; }
+    .tl { display: inline-block; }
+    .under {
+      display: block; height: 5px; background: #15544e; border-radius: 3px;
+      margin-top: 16px; width: 0;
+    }
+    .foot {
+      position: absolute; left: 168px; bottom: 92px;
+      font-size: 24px; color: #6b6862; letter-spacing: .01em;
+    }
+  </style>
+
+  <div id="root" data-composition-id="s01-open" data-width="1920" data-height="1080">
+    <div class="eyebrow" id="eb">
+      <span class="mark">F</span>
+      <span>Data Sense &nbsp;·&nbsp; Agent Builder Capstone</span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="line l1"><span class="tl" id="w1">Your capstone is not to build an agent.</span></div>
+    <div class="line l2">
+      <span class="tl" id="w2">It is to build <b>the thing that builds agents.</b></span>
+      <span class="under" id="ul"></span>
+    </div>
+
+    <div class="foot" id="ft">A three minute brief</div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#eb", "#w1", "#w2", "#ft"], { opacity: 0 });
+      gsap.set("#ul", { width: 0 });
+
+      tl.fromTo("#eb", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .6, ease: "power2.out" }, 0.15)
+        .fromTo("#w1", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: .75, ease: "power3.out" }, 0.5)
+        .fromTo("#w2", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: .75, ease: "power3.out" }, 1.5)
+        .fromTo("#ul", { width: 0 }, { width: 470, duration: .9, ease: "power3.inOut" }, 2.3)
+        .fromTo("#ft", { opacity: 0 }, { opacity: 1, duration: .6, ease: "power2.out" }, 3.2)
+        .to("#root", { opacity: 0, duration: .5, ease: "power2.in" }, 7.4);
+
+      window.__timelines["s01-open"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

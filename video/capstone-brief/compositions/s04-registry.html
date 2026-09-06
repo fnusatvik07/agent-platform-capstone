@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 84px 130px;
+    }
+    .kicker { font-size: 21px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #6b6862; }
+    .head { font-size: 52px; font-weight: 660; letter-spacing: -.022em; margin-top: 10px; }
+    .stepno {
+      display: inline-block; font-family: ui-monospace, Menlo, monospace;
+      font-size: 19px; font-weight: 700; color: #15544e; letter-spacing: .08em; margin-right: 14px;
+    }
+
+    .stage { position: absolute; left: 130px; right: 130px; top: 250px; display: flex; gap: 40px; align-items: flex-start; }
+
+    .panel { background: #fff; border: 1px solid #e5e3dd; border-radius: 16px; width: 700px; overflow: hidden; }
+    .ph { padding: 22px 28px 0; }
+    .ph .t { font-size: 26px; font-weight: 650; }
+    .ph .s { font-size: 18px; color: #6b6862; margin-top: 3px; }
+    .pb { padding: 20px 28px 26px; }
+    .fld { margin-bottom: 15px; }
+    .fld label { display: block; font-size: 16px; font-weight: 620; color: #6b6862; margin-bottom: 5px; }
+    .inp {
+      border: 1px solid #d0ccc4; border-radius: 9px; background: #faf9f7;
+      padding: 11px 14px; font-size: 19px; color: #191917;
+    }
+    .inp.mono { font-family: ui-monospace, Menlo, monospace; font-size: 17px; }
+    .btn {
+      display: inline-block; background: #23231f; color: #fdfdfc; border-radius: 9px;
+      padding: 11px 20px; font-size: 18px; font-weight: 600;
+    }
+
+    .tools { background: #fff; border: 1px solid #e5e3dd; border-radius: 16px; flex: 1; padding: 22px 26px; }
+    .tools .th {
+      font-size: 17px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase;
+      color: #6b6862; padding-bottom: 12px; border-bottom: 1px solid #e5e3dd;
+      display: flex; justify-content: space-between;
+    }
+    .trow {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 0; border-bottom: 1px solid #f2f0eb; font-size: 21px;
+    }
+    .trow .nm { font-family: ui-monospace, Menlo, monospace; }
+    .bg { border-radius: 999px; padding: 3px 12px; font-size: 15px; font-weight: 650; }
+    .bg.r { background: #f4f3f0; color: #6b6862; }
+    .bg.w { background: #faf3e4; color: #8a5712; }
+    .bg.d { background: #fbf1f0; color: #b3261e; }
+
+    .caption {
+      position: absolute; left: 130px; right: 130px; bottom: 128px;
+      font-size: 34px; font-weight: 600; letter-spacing: -.012em; color: #191917;
+    }
+    .caption .em { color: #15544e; }
+
+    .lockrow {
+      position: absolute; left: 130px; bottom: 210px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .lock {
+      display: inline-flex; align-items: center; gap: 11px;
+      background: #e9f0ee; color: #15544e; border-radius: 10px;
+      padding: 11px 20px; font-size: 22px; font-weight: 650;
+    }
+    .never {
+      display: flex; gap: 12px; font-size: 21px; color: #b3261e; font-weight: 600;
+    }
+    .never span { background: #fbf1f0; border: 1px solid #efcdc9; border-radius: 8px; padding: 7px 14px; }
+  </style>
+
+  <div id="root" data-composition-id="s04-registry" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick"><span class="stepno">01 / 02</span>Register, then connect</div>
+    <div class="head" id="head">The platform asks the server what it can do.</div>
+
+    <div class="stage">
+      <div class="panel" id="form">
+        <div class="ph">
+          <div class="t">Register an MCP server</div>
+          <div class="s">Saved only after the platform connects</div>
+        </div>
+        <div class="pb">
+          <div class="fld"><label>Name</label><div class="inp">github</div></div>
+          <div class="fld"><label>Endpoint</label><div class="inp mono">https://mcp.example.com/github</div></div>
+          <div class="fld"><label>Authentication</label><div class="inp">api_key</div></div>
+          <div class="btn" id="save">Connect &amp; save</div>
+        </div>
+      </div>
+
+      <div class="tools" id="tools">
+        <div class="th"><span>Tools it reported</span><span id="tcount">0</span></div>
+        <div class="trow tr"><span class="nm">list_issues</span><span class="bg r">read</span></div>
+        <div class="trow tr"><span class="nm">get_issue</span><span class="bg r">read</span></div>
+        <div class="trow tr"><span class="nm">list_pulls</span><span class="bg r">read</span></div>
+        <div class="trow tr"><span class="nm">create_issue</span><span class="bg w">write</span></div>
+        <div class="trow tr"><span class="nm">close_issue</span><span class="bg w">write</span></div>
+        <div class="trow tr"><span class="nm">delete_branch</span><span class="bg d">destructive</span></div>
+      </div>
+    </div>
+
+    <div class="lockrow" id="lockrow">
+      <div class="lock">🔒 &nbsp;Credential added and encrypted</div>
+      <div class="never" id="never">
+        <span>never in the config</span>
+        <span>never in a prompt</span>
+        <span>never in a log</span>
+      </div>
+    </div>
+
+    <div class="caption" id="cap">Nobody types tool names in by hand — and every tool is marked
+      <span class="em">read, write or destructive.</span></div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", "#form", "#tools", ".tr", "#cap", "#lockrow"], { opacity: 0 });
+      gsap.set("#never span", { opacity: 0 });
+      gsap.set("#save", { backgroundColor: "#23231f" });
+
+      tl.fromTo("#kick", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .5, ease: "power2.out" }, 0.15)
+        .fromTo("#head", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .65, ease: "power3.out" }, 0.35)
+        .fromTo("#form", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: .6, ease: "power3.out" }, 1.1);
+
+      // press save, then the server answers
+      tl.to("#save", { scale: .96, duration: .12, ease: "power2.out" }, 3.6)
+        .to("#save", { scale: 1, backgroundColor: "#15544e", duration: .2, ease: "power2.out" }, 3.75)
+        .fromTo("#tools", { opacity: 0, x: 28 }, { opacity: 1, x: 0, duration: .5, ease: "power3.out" }, 4.2)
+        .fromTo(".tr", { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: .34, stagger: .42, ease: "power2.out" }, 4.9);
+
+      // count up alongside the rows
+      const counter = { v: 0 };
+      tl.to(counter, {
+        v: 6, duration: 2.5, ease: "none",
+        onUpdate() { document.getElementById("tcount").textContent = Math.round(counter.v); }
+      }, 4.9);
+
+      tl.fromTo("#cap", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .55, ease: "power2.out" }, 8.6);
+
+      // then the credential
+      tl.to("#cap", { opacity: 0, duration: .4, ease: "power2.in" }, 13.4)
+        .fromTo("#lockrow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .55, ease: "power2.out" }, 14.0)
+        .fromTo("#never span", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .35, stagger: .5, ease: "power2.out" }, 15.4);
+
+      tl.to("#root", { opacity: 0, duration: .5, ease: "power2.in" }, 20.4);
+
+      window.__timelines["s04-registry"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 74px 130px;
+    }
+    .kicker { font-size: 20px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #b3261e; }
+    .head { font-size: 54px; font-weight: 660; letter-spacing: -.024em; margin-top: 8px; }
+    .sub { font-size: 26px; color: #6b6862; margin-top: 10px; }
+
+    .list { position: absolute; left: 130px; top: 300px; width: 900px; }
+    .ck { display: flex; gap: 15px; align-items: flex-start; padding: 11px 0; font-size: 23px; }
+    .ck .n { font-family: ui-monospace, Menlo, monospace; font-size: 17px;
+             font-weight: 700; color: #b3261e; width: 24px; flex: 0 0 24px; padding-top: 4px; }
+    .ck .t { color: #191917; line-height: 1.4; }
+
+    .we { position: absolute; right: 130px; top: 296px; width: 700px; }
+    .wl { font-size: 19px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: #6b6862; margin-bottom: 18px; }
+    .w {
+      background: #fbf1f0; border: 1px solid #efcdc9; border-left: 5px solid #b3261e;
+      border-radius: 0 12px 12px 0; padding: 18px 22px; margin-bottom: 14px;
+      font-size: 27px; font-weight: 620; color: #191917; line-height: 1.35;
+    }
+    .w b { color: #b3261e; }
+  </style>
+
+  <div id="root" data-composition-id="s08-grading" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick">How you are graded</div>
+    <div class="head" id="head">Nine checks. Each one passes or fails.</div>
+    <div class="sub" id="sub">All of them get run against your submission.</div>
+
+    <div class="list">
+      <div class="ck ci"><span class="n">01</span><span class="t">One user cannot reach another user's agents</span></div>
+      <div class="ck ci"><span class="n">02</span><span class="t">A credential we supply appears nowhere you stored</span></div>
+      <div class="ck ci"><span class="n">03</span><span class="t">An unguarded write tool cannot be published</span></div>
+      <div class="ck ci"><span class="n">04</span><span class="t">Planted confidential material does not survive publication</span></div>
+      <div class="ck ci"><span class="n">05</span><span class="t">Killing the server mid-build resumes on restart</span></div>
+      <div class="ck ci"><span class="n">06</span><span class="t">An approval left overnight still resumes</span></div>
+      <div class="ck ci"><span class="n">07</span><span class="t">The playground runs the multi-agent demo end to end</span></div>
+      <div class="ck ci"><span class="n">08</span><span class="t">The Postman collection gets a real response</span></div>
+      <div class="ck ci"><span class="n">09</span><span class="t">Another company's agent does not reveal it exists</span></div>
+    </div>
+
+    <div class="we">
+      <div class="wl" id="wl">Which means, concretely</div>
+      <div class="w wi">We will <b>delete your tenant filter</b> and read another user's agents.</div>
+      <div class="w wi">We will <b>search everything you stored</b> for the credential we gave you.</div>
+      <div class="w wi">We will <b>kill your server mid-build.</b></div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", "#sub", "#wl", ".ci", ".wi"], { opacity: 0 });
+
+      tl.fromTo("#kick", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45 }, 0.15)
+        .fromTo("#head", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .6, ease: "power3.out" }, 0.3)
+        .fromTo("#sub", { opacity: 0 }, { opacity: 1, duration: .45 }, 0.8)
+        .fromTo(".ci", { opacity: 0, x: -18 },
+                       { opacity: 1, x: 0, duration: .3, stagger: .19, ease: "power2.out" }, 1.4);
+
+      tl.fromTo("#wl", { opacity: 0 }, { opacity: 1, duration: .4 }, 5.6)
+        .fromTo(".wi", { opacity: 0, x: 22 },
+                       { opacity: 1, x: 0, duration: .5, stagger: 2.4, ease: "power3.out" }, 6.0);
+
+      tl.to("#root", { opacity: 0, duration: .5, ease: "power2.in" }, 17.4);
+
+      window.__timelines["s08-grading"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

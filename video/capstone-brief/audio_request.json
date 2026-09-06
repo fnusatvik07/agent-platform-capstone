@@ -1,0 +1,44 @@
+{
+  "provider": "kokoro",
+  "lang": "en",
+  "speed": 1.0,
+  "bgm": { "mode": "none" },
+  "lines": [
+    {
+      "id": "s1",
+      "text": "Your capstone is not to build an agent. It is to build the thing that builds agents."
+    },
+    {
+      "id": "s2",
+      "text": "Right now, in most companies, every team that wants an agent writes it from scratch. The same graph boilerplate, copied into six repositories. API keys hardcoded in every one of them. And when someone asks the two questions that actually matter — what agents are running here, and what are they allowed to touch — nobody can answer. You are building the platform that answers both."
+    },
+    {
+      "id": "s3",
+      "text": "Three tabs. A registry of tool servers. A place to build. And a workspace of your own agents. Plus a marketplace everyone can install from, and an admin queue guarding the door to it. Six steps, end to end."
+    },
+    {
+      "id": "s4",
+      "text": "First, someone registers an M C P server. Your platform connects to it and asks it what tools it has. Nobody types tool names in by hand. Each tool is marked read, write, or destructive. Then they add their credential, once. It is encrypted on the way in, and it never comes back out."
+    },
+    {
+      "id": "s5",
+      "text": "Now the part that matters. They open Build, and type what they want. Your platform works out what the agent needs to do, searches its registry, and shows them the servers it thinks it needs. It stops there, and waits. They pick. Then it checks their connections. GitHub, yes. Slack, no. So it stops again, and asks for a token before it will go any further. Those two pauses are the centre of this project. They are interrupts, and the build has to survive a server restart while it is waiting, and pick up exactly where it left off. Then it writes the configuration, deploys the agent, and shows it."
+    },
+    {
+      "id": "s6",
+      "text": "The agent appears as a card. Open it, and you get its graph, drawn from its configuration, not maintained by hand. Its tools. Its scores. And a playground. Chat with it. Watch the coordinator hand work to its specialists. And when it tries to post to Slack, it stops and asks. Nothing is sent until a person clicks approve."
+    },
+    {
+      "id": "s7",
+      "text": "When it works, they publish it. It does not go live. It goes to an admin, and the run parks there, possibly for three days, across two deploys and a weekend. Approve it, and it reaches the marketplace, stripped of everything internal to the company that built it. Someone in another company adds it to their workspace, with their own credentials."
+    },
+    {
+      "id": "s8",
+      "text": "You will be graded on nine checks. Each one passes or fails, and all of them get run. We will delete your tenant filter, and try to read another user's agents. We will search everything you stored for the credential we gave you. We will kill your server mid build."
+    },
+    {
+      "id": "s9",
+      "text": "Submit a GitHub repository. Then present, live, for forty five minutes. Bring the running system. Slides alone will not do. Everything you need is here."
+    }
+  ]
+}

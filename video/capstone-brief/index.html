@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf9f7;
+      }
+      body { font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="189"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- ============================================ scenes -->
+      <div id="clip-s01-open" data-composition-id="s01-open"      data-composition-src="compositions/s01-open.html"
+           data-start="0"     data-duration="8"    data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s02-problem" data-composition-id="s02-problem"   data-composition-src="compositions/s02-problem.html"
+           data-start="8"     data-duration="25.5" data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s03-shape" data-composition-id="s03-shape"     data-composition-src="compositions/s03-shape.html"
+           data-start="33.5"  data-duration="16"   data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s04-registry" data-composition-id="s04-registry"  data-composition-src="compositions/s04-registry.html"
+           data-start="49.5"  data-duration="21"   data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s05-build" data-composition-id="s05-build"     data-composition-src="compositions/s05-build.html"
+           data-start="70.5"  data-duration="39.5" data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s06-test" data-composition-id="s06-test"      data-composition-src="compositions/s06-test.html"
+           data-start="110"   data-duration="23.5" data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s07-publish" data-composition-id="s07-publish"   data-composition-src="compositions/s07-publish.html"
+           data-start="133.5" data-duration="23.5" data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s08-grading" data-composition-id="s08-grading"   data-composition-src="compositions/s08-grading.html"
+           data-start="157"   data-duration="18"   data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <div id="clip-s09-close" data-composition-id="s09-close"     data-composition-src="compositions/s09-close.html"
+           data-start="175"   data-duration="14"   data-track-index="0" data-width="1920" data-height="1080"></div>
+
+      <!-- ============================================ narration -->
+      <audio id="vo1" src="assets/voice/s1.wav" data-start="1"     data-duration="5.44"  data-track-index="9" data-volume="1"></audio>
+      <audio id="vo2" src="assets/voice/s2.wav" data-start="8.6"   data-duration="24.09" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo3" src="assets/voice/s3.wav" data-start="34.1"  data-duration="14.51" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo4" src="assets/voice/s4.wav" data-start="50.1"  data-duration="19.63" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo5" src="assets/voice/s5.wav" data-start="71.2"  data-duration="36.95" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo6" src="assets/voice/s6.wav" data-start="110.7" data-duration="21.63" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo7" src="assets/voice/s7.wav" data-start="134.2" data-duration="21.85" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo8" src="assets/voice/s8.wav" data-start="157.6" data-duration="16.68" data-track-index="9" data-volume="1"></audio>
+      <audio id="vo9" src="assets/voice/s9.wav" data-start="175.6" data-duration="10.9"  data-track-index="9" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      // Scenes own their motion; the host only holds the running order.
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

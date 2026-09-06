@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 60px 110px;
+    }
+    .kicker { font-size: 20px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #6b6862; }
+    .stepno { font-family: ui-monospace, Menlo, monospace; font-size: 18px; font-weight: 700; color: #15544e; letter-spacing: .08em; margin-right: 13px; }
+    .head { font-size: 44px; font-weight: 660; letter-spacing: -.02em; margin-top: 8px; }
+
+    .stage { position: absolute; left: 110px; right: 110px; top: 196px; bottom: 56px; }
+    .chat { position: absolute; left: 0; top: 0; width: 1130px; height: 100%; }
+    .slot { position: absolute; left: 0; top: 232px; width: 1130px; }
+
+    .msg { position: absolute; left: 0; display: flex; gap: 15px; align-items: flex-start; width: 1130px; }
+    .av { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 9px; display: grid; place-items: center;
+          font-size: 16px; font-weight: 700; background: #23231f; color: #fdfdfc; }
+    .body { font-size: 25px; line-height: 1.45; padding-top: 3px; }
+    .body .dim { color: #6b6862; }
+    .msg.user { justify-content: flex-end; }
+    .msg.user .body {
+      background: #fff; border: 1px solid #e5e3dd; border-radius: 13px;
+      padding: 14px 20px; font-size: 26px; max-width: 900px;
+    }
+    .type { display: inline-block; clip-path: inset(0 100% 0 0); }
+
+    .ip { border: 2px solid #15544e; border-radius: 14px; background: #fff; overflow: hidden; }
+    .iph {
+      background: #e9f0ee; color: #15544e; padding: 11px 20px;
+      font-size: 17px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .ipb { padding: 17px 20px; }
+    .pick { display: flex; align-items: center; gap: 15px; padding: 12px 16px;
+            border: 1px solid #e5e3dd; border-radius: 10px; margin-bottom: 10px; }
+    .pick:last-child { margin-bottom: 0; }
+    .box { width: 24px; height: 24px; flex: 0 0 24px; border-radius: 6px; border: 2px solid #d0ccc4;
+           background: #fff; display: grid; place-items: center; position: relative; }
+    .tick { color: #fdfdfc; font-size: 15px; font-weight: 800; line-height: 1; }
+    .pk-name { font-size: 24px; font-weight: 640; }
+    .pk-sub { font-size: 19px; color: #6b6862; margin-top: 1px; }
+    .tag { border-radius: 999px; padding: 3px 12px; font-size: 15px; font-weight: 650; margin-left: 10px; }
+    .tag.ok { background: #eef4ee; color: #2f6b3c; }
+    .tag.no { background: #fbf1f0; color: #b3261e; }
+    .tag.wr { background: #faf3e4; color: #8a5712; }
+
+    .row2 { display: flex; align-items: center; gap: 14px; padding: 9px 2px; }
+    .btnp { display: inline-block; background: #23231f; color: #fdfdfc; border-radius: 9px;
+            padding: 10px 24px; font-size: 19px; font-weight: 620; position: relative;
+            white-space: nowrap; min-width: 246px; text-align: center; }
+    .btnp .lbl { display: block; }
+    .btnp .lbl2 { position: absolute; inset: 0; display: grid; place-items: center; }
+
+    .agent { background: #fff; border: 1px solid #e5e3dd; border-radius: 15px; padding: 24px 28px; width: 760px; }
+    .agent .an { font-size: 30px; font-weight: 660; display: flex; justify-content: space-between; align-items: center; }
+    .agent .ad { font-size: 21px; color: #6b6862; margin-top: 7px; line-height: 1.4; }
+    .agent .arow { display: flex; gap: 9px; margin-top: 17px; flex-wrap: wrap; }
+    .chip { font-family: ui-monospace, Menlo, monospace; font-size: 16px;
+            background: #f4f3f0; border: 1px solid #e5e3dd; border-radius: 7px; padding: 5px 11px; color: #6b6862; }
+    .chip.acc { background: #e9f0ee; border-color: transparent; color: #15544e; font-family: inherit; font-weight: 650; }
+    .live { background: #eef4ee; color: #2f6b3c; border-radius: 999px; padding: 4px 14px; font-size: 16px; font-weight: 650; }
+
+    .rail { position: absolute; right: 0; top: 0; width: 400px; }
+    .rlab { font-size: 18px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; color: #6b6862; margin-bottom: 16px; }
+    .rstep { display: flex; gap: 14px; padding: 12px 0; }
+    .rdot { width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; background: #f4f3f0;
+            border: 1px solid #e5e3dd; color: #6b6862; display: grid; place-items: center;
+            font-size: 15px; font-weight: 700; }
+    .rt { font-size: 23px; font-weight: 600; }
+    .rs { font-size: 18px; color: #6b6862; margin-top: 1px; }
+    .pausemark { margin-left: 42px; margin-top: -6px; font-size: 17px; font-weight: 700;
+                 color: #15544e; letter-spacing: .06em; text-transform: uppercase; }
+    .resume {
+      display: inline-flex; align-items: center; gap: 11px; margin-top: 26px;
+      background: #fbf1f0; border: 1px solid #efcdc9; color: #b3261e; border-radius: 9px;
+      padding: 10px 17px; font-size: 19px; font-weight: 640; line-height: 1.35;
+    }
+  </style>
+
+  <div id="root" data-composition-id="s05-build" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick"><span class="stepno">03</span>Describe an agent</div>
+    <div class="head" id="head">Two places where it stops and asks.</div>
+
+    <div class="stage">
+      <div class="chat">
+
+        <div class="msg user" id="m1" style="top:0">
+          <div class="body"><span class="type" id="t1">I want an agent that reads my open GitHub issues every morning and posts a summary to Slack.</span></div>
+        </div>
+
+        <div class="msg" id="m2" style="top:120px">
+          <div class="av">F</div>
+          <div class="body">Two jobs — classifying and writing. I'll make it a coordinator with two specialists.<br>
+            <span class="dim">Searching your registry…</span></div>
+        </div>
+
+        <!-- all three share one slot -->
+        <div class="slot">
+          <div class="ip" id="ip1">
+            <div class="iph"><span>Paused · waiting for you</span><span>interrupt: select_tools</span></div>
+            <div class="ipb">
+              <div class="pick" id="p1">
+                <div class="box" id="b1"><span class="tick" id="k1">✓</span></div>
+                <div><div class="pk-name">github <span class="tag ok">connected</span></div>
+                     <div class="pk-sub">list_issues, get_issue — read only</div></div>
+              </div>
+              <div class="pick" id="p2">
+                <div class="box" id="b2"><span class="tick" id="k2">✓</span></div>
+                <div><div class="pk-name">slack <span class="tag no">not connected</span></div>
+                     <div class="pk-sub">post_message <span class="tag wr">write</span> — will ask before posting</div></div>
+              </div>
+              <div class="pick" id="p3">
+                <div class="box"><span class="tick" style="opacity:0">✓</span></div>
+                <div><div class="pk-name">jira</div>
+                     <div class="pk-sub">search_issues, create_issue — not needed here</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot">
+          <div class="ip" id="ip2" style="border-color:#b3261e">
+            <div class="iph" style="background:#fbf1f0;color:#b3261e">
+              <span>Paused · missing credential</span><span>interrupt: missing_connection</span>
+            </div>
+            <div class="ipb">
+              <div class="row2"><span class="tag ok">ok</span><span class="pk-name">github</span>
+                <span class="pk-sub">connected 12 Aug, last used 2h ago</span></div>
+              <div class="row2"><span class="tag no">missing</span><span class="pk-name">slack</span>
+                <span class="pk-sub">no Slack credential in this workspace</span></div>
+              <div class="pk-sub" style="margin:8px 2px 14px">
+                Add one to carry on. It is encrypted when you save it, and never written into the agent's configuration.
+              </div>
+              <div class="btnp" id="cbtn">
+                <span class="lbl" id="cl1">Connect Slack</span>
+                <span class="lbl2" id="cl2">Slack connected ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot">
+          <div class="agent" id="acard">
+            <div class="an">Issue Digest <span class="live">live</span></div>
+            <div class="ad">Triages open GitHub issues by severity and posts a morning digest to Slack.</div>
+            <div class="arow">
+              <span class="chip cp">github.list_issues</span>
+              <span class="chip cp">github.get_issue</span>
+              <span class="chip cp">slack.post_message</span>
+              <span class="chip acc cp">multi-agent</span>
+              <span class="chip acc cp">asks before posting</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <div class="rlab" id="rlab">Builder graph</div>
+        <div class="rstep"><div class="rdot" id="d1">1</div><div><div class="rt">Understand</div><div class="rs">what it should do</div></div></div>
+        <div class="rstep"><div class="rdot" id="d2">2</div><div><div class="rt">Pick tools</div><div class="rs">search the registry</div></div></div>
+        <div class="pausemark" id="pm1">↑ pause</div>
+        <div class="rstep"><div class="rdot" id="d3">3</div><div><div class="rt">Check connections</div><div class="rs">stop if one is missing</div></div></div>
+        <div class="pausemark" id="pm2">↑ pause</div>
+        <div class="rstep"><div class="rdot" id="d4">4</div><div><div class="rt">Build and deploy</div><div class="rs">write the config</div></div></div>
+
+        <div class="resume" id="resume">↻&nbsp; server restarted —<br>resumed right here</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const done = { backgroundColor: "#e9f0ee", borderColor: "#15544e", color: "#15544e" };
+
+      gsap.set(["#kick", "#head", "#m1", "#m2", "#ip1", "#ip2", "#acard",
+                "#rlab", "#resume", "#pm1", "#pm2", "#k1", "#k2", "#cl2", ".cp"], { opacity: 0 });
+      gsap.set(".rstep", { opacity: 0 });
+      gsap.set("#t1", { clipPath: "inset(0 100% 0 0)" });
+
+      tl.fromTo("#kick", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45 }, 0.15)
+        .fromTo("#head", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, ease: "power3.out" }, 0.3)
+        .fromTo("#rlab", { opacity: 0 }, { opacity: 1, duration: .4 }, 0.5)
+        .fromTo(".rstep", { opacity: 0, x: 14 }, { opacity: 1, x: 0, duration: .35, stagger: .12, ease: "power2.out" }, 0.6);
+
+      // 1 — the request types itself in
+      tl.fromTo("#m1", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4 }, 1.1)
+        .to("#t1", { clipPath: "inset(0 0% 0 0)", duration: 2.4, ease: "none" }, 1.4)
+        .to("#d1", done, 4.1);
+
+      // 2 — it works out the shape
+      tl.fromTo("#m2", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .5, ease: "power2.out" }, 4.4)
+        .to("#d2", done, 7.2);
+
+      // 3 — FIRST PAUSE
+      tl.fromTo("#ip1", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .5, ease: "power3.out" }, 7.5)
+        .fromTo("#pm1", { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: .35 }, 8.4)
+        .fromTo("#resume", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45, ease: "power2.out" }, 11.5);
+
+      // the user picks two
+      tl.to("#b1", { backgroundColor: "#15544e", borderColor: "#15544e", duration: .18 }, 14.4)
+        .to("#k1", { opacity: 1, duration: .12 }, 14.5)
+        .to("#p1", { borderColor: "#15544e", backgroundColor: "#f5f8f7", duration: .25 }, 14.4)
+        .to("#b2", { backgroundColor: "#15544e", borderColor: "#15544e", duration: .18 }, 15.1)
+        .to("#k2", { opacity: 1, duration: .12 }, 15.2)
+        .to("#p2", { borderColor: "#15544e", backgroundColor: "#f5f8f7", duration: .25 }, 15.1)
+        .to("#pm1", { opacity: .3, duration: .4 }, 16.3)
+        .to("#resume", { opacity: 0, duration: .35 }, 16.3)
+        .to("#d3", done, 16.9);
+
+      // 4 — SECOND PAUSE
+      tl.to("#ip1", { opacity: 0, y: -16, duration: .45, ease: "power2.in" }, 17.0)
+        .fromTo("#ip2", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .5, ease: "power3.out" }, 17.6)
+        .fromTo("#pm2", { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: .35 }, 18.4);
+
+      // they connect it
+      tl.to("#cbtn", { scale: .96, duration: .12 }, 22.6)
+        .to("#cbtn", { scale: 1, backgroundColor: "#15544e", duration: .2 }, 22.75)
+        .to("#cl1", { opacity: 0, duration: .15 }, 22.85)
+        .to("#cl2", { opacity: 1, duration: .15 }, 22.95)
+        .to("#pm2", { opacity: .3, duration: .4 }, 23.6)
+        .to("#d4", done, 24.1);
+
+      // 5 — built and deployed
+      tl.to("#ip2", { opacity: 0, y: -16, duration: .45, ease: "power2.in" }, 24.5)
+        .to("#m2", { opacity: .3, duration: .4 }, 24.5)
+        .fromTo("#acard", { opacity: 0, y: 26, scale: .975 },
+                          { opacity: 1, y: 0, scale: 1, duration: .7, ease: "power3.out" }, 25.3)
+        .to(".cp", { opacity: 1, duration: .3, stagger: .18, ease: "power2.out" }, 26.1);
+
+      tl.to("#root", { opacity: 0, duration: .55, ease: "power2.in" }, 38.9);
+
+      window.__timelines["s05-build"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

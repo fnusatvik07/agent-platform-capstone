@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 66px 130px;
+    }
+    .kicker { font-size: 20px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #6b6862; }
+    .stepno { font-family: ui-monospace, Menlo, monospace; font-size: 18px; font-weight: 700; color: #15544e; letter-spacing: .08em; margin-right: 13px; }
+    .head { font-size: 46px; font-weight: 660; letter-spacing: -.02em; margin-top: 8px; }
+
+    .stage { position: absolute; left: 130px; right: 130px; top: 214px; bottom: 60px; }
+
+    .lane { position: absolute; top: 0; width: 476px; }
+    .lane.l1 { left: 0; } .lane.l2 { left: 592px; } .lane.l3 { left: 1184px; }
+    .lt { font-size: 19px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: #6b6862; margin-bottom: 16px; }
+    .card { background: #fff; border: 1px solid #e5e3dd; border-radius: 15px; padding: 22px 24px; }
+    .cn { font-size: 26px; font-weight: 650; }
+    .cd { font-size: 19px; color: #6b6862; margin-top: 7px; line-height: 1.42; }
+    .crow { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .chip { font-family: ui-monospace, Menlo, monospace; font-size: 15px;
+            background: #f4f3f0; border: 1px solid #e5e3dd; border-radius: 7px; padding: 4px 10px; color: #6b6862; }
+    .bp { display: inline-block; background: #23231f; color: #fdfdfc; border-radius: 9px;
+          padding: 11px 22px; font-size: 20px; font-weight: 620; margin-top: 16px; }
+
+    .arrow { position: absolute; top: 190px; font-size: 40px; color: #c9c5bd; }
+    .arrow.a1 { left: 512px; } .arrow.a2 { left: 1104px; }
+
+    .parked {
+      background: #faf3e4; border: 1px solid #e3d3ae; border-radius: 12px;
+      padding: 16px 20px; margin-top: 16px;
+    }
+    .parked .pl { font-size: 18px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #8a5712; }
+    .parked .pv { font-size: 34px; font-weight: 680; color: #191917; margin-top: 5px; }
+    .parked .ps { font-size: 18px; color: #8a5712; margin-top: 3px; }
+
+    .decide { display: flex; gap: 11px; margin-top: 16px; }
+    .db { background: #23231f; color: #fdfdfc; border-radius: 9px; padding: 10px 18px; font-size: 18px; font-weight: 620; }
+    .ds { background: #fff; border: 1px solid #d0ccc4; border-radius: 9px; padding: 10px 18px; font-size: 18px; font-weight: 600; }
+
+    .stripped {
+      position: absolute; left: 0; right: 0; bottom: 24px;
+      display: flex; gap: 12px; align-items: center; font-size: 20px;
+    }
+    .stripped .lab { color: #6b6862; font-weight: 600; }
+    .stripped span.x {
+      background: #fbf1f0; border: 1px solid #efcdc9; color: #b3261e;
+      border-radius: 8px; padding: 7px 14px; font-weight: 620;
+    }
+    .own { background: #e9f0ee; color: #15544e; border-radius: 999px; padding: 4px 13px; font-size: 16px; font-weight: 650; }
+  </style>
+
+  <div id="root" data-composition-id="s07-publish" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick"><span class="stepno">05 / 06</span>Publish, review, install</div>
+    <div class="head" id="head">It does not go live. It goes to a person.</div>
+
+    <div class="stage">
+      <div class="lane l1" id="lane1">
+        <div class="lt">Northwind Labs</div>
+        <div class="card">
+          <div class="cn">Issue Digest</div>
+          <div class="cd">Triages open GitHub issues and posts a morning digest to Slack.</div>
+          <div class="crow"><span class="chip">github</span><span class="chip">slack</span></div>
+          <div class="bp" id="pbtn">Publish to Marketplace</div>
+        </div>
+      </div>
+
+      <div class="arrow a1" id="ar1">→</div>
+
+      <div class="lane l2" id="lane2">
+        <div class="lt">Admin review</div>
+        <div class="card">
+          <div class="cn">Waiting for a decision</div>
+          <div class="cd">The run parked here the moment it was submitted.</div>
+          <div class="parked">
+            <div class="pl">Paused</div>
+            <div class="pv" id="days">3 days</div>
+            <div class="ps">across two deploys and a weekend</div>
+          </div>
+          <div class="decide" id="dec">
+            <span class="db">Approve</span>
+            <span class="ds">Request changes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow a2" id="ar2">→</div>
+
+      <div class="lane l3" id="lane3">
+        <div class="lt">Helios Systems</div>
+        <div class="card">
+          <div class="cn">Issue Digest <span class="own">installed</span></div>
+          <div class="cd">Added to their workspace. Their own credentials, their own copy.</div>
+          <div class="crow"><span class="chip">their github</span><span class="chip">their slack</span></div>
+          <div class="bp" style="background:#15544e">Add to my workspace</div>
+        </div>
+      </div>
+
+      <div class="stripped" id="strip">
+        <span class="lab">Stripped before it leaves:</span>
+        <span class="x sx">credentials</span>
+        <span class="x sx">internal URLs</span>
+        <span class="x sx">who built it</span>
+        <span class="x sx">their runs and data</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", "#lane1", "#lane2", "#lane3", "#ar1", "#ar2", "#strip"], { opacity: 0 });
+      gsap.set(".sx", { opacity: 0 });
+
+      tl.fromTo("#kick", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45 }, 0.15)
+        .fromTo("#head", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, ease: "power3.out" }, 0.3)
+        .fromTo("#lane1", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .55, ease: "power3.out" }, 0.9);
+
+      // publish is pressed
+      tl.to("#pbtn", { scale: .96, duration: .12 }, 3.4)
+        .to("#pbtn", { scale: 1, duration: .2 }, 3.55)
+        .fromTo("#ar1", { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: .4 }, 3.9)
+        .fromTo("#lane2", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .55, ease: "power3.out" }, 4.2);
+
+      // it waits, and waits
+      const d = { v: 0 };
+      tl.to(d, {
+        v: 3, duration: 3.4, ease: "power1.inOut",
+        onUpdate() {
+          const n = Math.max(1, Math.round(d.v));
+          document.getElementById("days").textContent = n + (n === 1 ? " day" : " days");
+        }
+      }, 7.4);
+
+      // approved
+      tl.to("#dec", { scale: 1.03, duration: .2, ease: "power2.out" }, 13.0)
+        .to("#dec", { scale: 1, duration: .2 }, 13.2)
+        .fromTo("#ar2", { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: .4 }, 13.4)
+        .fromTo("#lane3", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .55, ease: "power3.out" }, 13.7);
+
+      // and stripped on the way out
+      tl.fromTo("#strip", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45 }, 16.6)
+        .to(".sx", { opacity: 1, duration: .3, stagger: .38, ease: "power2.out" }, 17.0);
+
+      tl.to("#root", { opacity: 0, duration: .5, ease: "power2.in" }, 22.9);
+
+      window.__timelines["s07-publish"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>

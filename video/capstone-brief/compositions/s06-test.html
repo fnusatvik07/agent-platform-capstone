@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /></head>
+<body>
+<template>
+  <style>
+    #root {
+      position: absolute; inset: 0; background: #faf9f7; color: #191917;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      padding: 66px 130px;
+    }
+    .kicker { font-size: 20px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #6b6862; }
+    .stepno { font-family: ui-monospace, Menlo, monospace; font-size: 18px; font-weight: 700; color: #15544e; letter-spacing: .08em; margin-right: 13px; }
+    .head { font-size: 46px; font-weight: 660; letter-spacing: -.02em; margin-top: 8px; }
+
+    .stage { position: absolute; left: 130px; right: 130px; top: 208px; bottom: 60px; }
+
+    .cards { position: absolute; left: 0; top: 0; width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .ac { background: #fff; border: 1px solid #e5e3dd; border-radius: 15px; padding: 22px 24px; }
+    .ac .n { font-size: 27px; font-weight: 650; display: flex; justify-content: space-between; align-items: center; }
+    .ac .d { font-size: 19px; color: #6b6862; margin-top: 8px; line-height: 1.4; min-height: 54px; }
+    .ac .f { display: flex; justify-content: space-between; align-items: center; margin-top: 16px;
+             padding-top: 14px; border-top: 1px solid #f0eee9; font-size: 18px; color: #6b6862; }
+    .sc { font-size: 20px; color: #6b6862; } .sc b { font-size: 24px; color: #191917; }
+    .gr { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 7px;
+          font-size: 17px; font-weight: 700; margin-left: 8px; }
+    .gr.a { background: #eef4ee; color: #2f6b3c; } .gr.b { background: #f4f3f0; color: #191917; }
+    .live { background: #eef4ee; color: #2f6b3c; border-radius: 999px; padding: 3px 12px; font-size: 15px; font-weight: 650; }
+
+    .graphwrap { position: absolute; left: 0; top: 236px; width: 1120px; }
+    .glab { font-size: 18px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; color: #6b6862; margin-bottom: 14px; }
+    .gbox { background: #f4f3f0; border: 1px solid #e5e3dd; border-radius: 14px; padding: 26px 20px; }
+    .gnote { font-size: 21px; color: #6b6862; margin-top: 14px; }
+
+    .appr { position: absolute; right: 0; top: 236px; width: 620px;
+            border: 2px solid #8a5712; border-radius: 14px; background: #fff; overflow: hidden; }
+    .ah { background: #faf3e4; color: #8a5712; padding: 12px 20px; font-size: 17px; font-weight: 700;
+          letter-spacing: .08em; text-transform: uppercase; }
+    .ab { padding: 18px 20px; }
+    .ch { font-size: 17px; color: #6b6862; margin-bottom: 9px; }
+    .pre { background: #f4f3f0; border: 1px solid #e5e3dd; border-radius: 9px; padding: 14px 16px;
+           font-family: ui-monospace, Menlo, monospace; font-size: 18px; line-height: 1.55; color: #191917; }
+    .btns { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
+    .bp { background: #23231f; color: #fdfdfc; border-radius: 9px; padding: 10px 20px; font-size: 19px; font-weight: 620; }
+    .bs { background: #fff; border: 1px solid #d0ccc4; border-radius: 9px; padding: 10px 20px; font-size: 19px; font-weight: 600; }
+    .hint { font-size: 18px; color: #6b6862; }
+  </style>
+
+  <div id="root" data-composition-id="s06-test" data-width="1920" data-height="1080">
+    <div class="kicker" id="kick"><span class="stepno">04</span>Test it</div>
+    <div class="head" id="head">A card, a graph, and a chat window.</div>
+
+    <div class="stage">
+      <div class="cards">
+        <div class="ac cd">
+          <div class="n">Issue Digest <span class="live">live</span></div>
+          <div class="d">Triages open GitHub issues by severity and posts a morning digest to Slack.</div>
+          <div class="f"><span class="sc">Score <b>82</b><span class="gr b">B</span></span><span>41 runs · 2h ago</span></div>
+        </div>
+        <div class="ac cd">
+          <div class="n">Release Notes <span class="live">live</span></div>
+          <div class="d">Reads merged pull requests since the last tag and drafts release notes.</div>
+          <div class="f"><span class="sc">Score <b>76</b><span class="gr a">A</span></span><span>18 runs · yesterday</span></div>
+        </div>
+        <div class="ac cd">
+          <div class="n">Docs Freshness <span class="live">live</span></div>
+          <div class="d">Finds documentation pages that reference code paths which no longer exist.</div>
+          <div class="f"><span class="sc">Score <b>88</b><span class="gr a">A</span></span><span>57 runs · 31m ago</span></div>
+        </div>
+      </div>
+
+      <div class="graphwrap" id="gw">
+        <div class="glab">Its graph — drawn from its configuration</div>
+        <div class="gbox">
+          <svg viewBox="0 0 1040 250" width="100%" style="display:block">
+            <defs>
+              <marker id="a6" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L8,4 L0,8 z" fill="#c9c5bd"/>
+              </marker>
+            </defs>
+            <g id="edges" fill="none" stroke="#c9c5bd" stroke-width="2">
+              <path class="ed" d="M176,125 H244" marker-end="url(#a6)"/>
+              <path class="ed" d="M424,110 C470,110 470,64 520,64" marker-end="url(#a6)"/>
+              <path class="ed" d="M424,140 C470,140 470,186 520,186" marker-end="url(#a6)"/>
+              <path class="ed" d="M700,64 H774" marker-end="url(#a6)"/>
+              <path class="ed" d="M700,186 H774" marker-end="url(#a6)"/>
+            </g>
+            <g font-family="system-ui, -apple-system, sans-serif">
+              <g class="nd"><rect x="40" y="103" width="136" height="44" rx="10" fill="#fff" stroke="#d0ccc4"/>
+                <text x="108" y="131" font-size="19" font-weight="600" fill="#191917" text-anchor="middle">message</text></g>
+              <g class="nd"><rect x="244" y="99" width="180" height="52" rx="11" fill="#e9f0ee" stroke="#15544e"/>
+                <text x="334" y="122" font-size="20" font-weight="650" fill="#191917" text-anchor="middle">supervisor</text>
+                <text x="334" y="140" font-size="15" fill="#6b6862" text-anchor="middle">routes the work</text></g>
+              <g class="nd"><rect x="520" y="40" width="180" height="50" rx="11" fill="#fff" stroke="#d0ccc4"/>
+                <text x="610" y="62" font-size="20" font-weight="650" fill="#191917" text-anchor="middle">triager</text>
+                <text x="610" y="80" font-size="15" fill="#6b6862" text-anchor="middle">P0 / P1 / P2</text></g>
+              <g class="nd"><rect x="520" y="162" width="180" height="50" rx="11" fill="#fff" stroke="#d0ccc4"/>
+                <text x="610" y="184" font-size="20" font-weight="650" fill="#191917" text-anchor="middle">reporter</text>
+                <text x="610" y="202" font-size="15" fill="#6b6862" text-anchor="middle">writes the digest</text></g>
+              <g class="nd"><rect x="774" y="42" width="196" height="46" rx="10" fill="#fff" stroke="#d0ccc4"/>
+                <text x="872" y="62" font-size="19" font-weight="600" fill="#191917" text-anchor="middle">github</text>
+                <text x="872" y="79" font-size="14" fill="#6b6862" text-anchor="middle">2 read tools</text></g>
+              <g class="nd"><rect x="774" y="164" width="196" height="46" rx="10" fill="#faf3e4" stroke="#8a5712"/>
+                <text x="872" y="184" font-size="19" font-weight="600" fill="#191917" text-anchor="middle">slack</text>
+                <text x="872" y="201" font-size="14" fill="#8a5712" text-anchor="middle">post_message · asks</text></g>
+            </g>
+          </svg>
+        </div>
+        <div class="gnote" id="gnote">Not maintained by hand. Change the configuration, the picture changes.</div>
+      </div>
+
+      <div class="appr" id="appr">
+        <div class="ah">Waiting for approval · slack.post_message</div>
+        <div class="ab">
+          <div class="ch">channel: #eng-standup</div>
+          <div class="pre">*Morning digest — 23 open*<br><br>
+            🔴 P0 (3) — all auth-service<br>
+            &nbsp;&nbsp;#1841 token refresh loops on expiry<br>
+            &nbsp;&nbsp;#1839 SSO callback drops the state param</div>
+          <div class="btns">
+            <span class="bp">Approve &amp; post</span>
+            <span class="bs">Reject</span>
+            <span class="hint" id="hint">Nothing is sent until you choose.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(["#kick", "#head", ".cd", "#gw", "#appr"], { opacity: 0 });
+      gsap.set([".nd", ".ed"], { opacity: 0 });
+
+      tl.fromTo("#kick", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .45 }, 0.15)
+        .fromTo("#head", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, ease: "power3.out" }, 0.3)
+        .fromTo(".cd", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .5, stagger: .3, ease: "power3.out" }, 0.9);
+
+      // the graph assembles
+      tl.fromTo("#gw", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .55, ease: "power3.out" }, 3.6)
+        .to(".nd", { opacity: 1, duration: .34, stagger: .22, ease: "power2.out" }, 4.0)
+        .to(".ed", { opacity: 1, duration: .3, stagger: .18, ease: "power2.out" }, 4.6);
+
+      // and then it wants to post something
+      tl.to("#gw", { opacity: .32, duration: .5, ease: "power2.inOut" }, 11.6)
+        .fromTo("#appr", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: .55, ease: "power3.out" }, 11.9)
+        .fromTo("#hint", { opacity: 0 }, { opacity: 1, duration: .4 }, 15.4);
+
+      // hold, then leave
+      tl.to("#root", { opacity: 0, duration: .5, ease: "power2.in" }, 22.9);
+
+      window.__timelines["s06-test"] = tl;
+    })();
+  </script>
+</template>
+</body>
+</html>
