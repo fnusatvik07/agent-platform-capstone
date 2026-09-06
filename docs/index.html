@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forge — Agent Platform Capstone</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .page { max-width: 940px; margin: 0 auto; padding: 56px 24px 80px; }
+  .topnav {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 10px 26px;
+  }
+  .topnav .links { display: flex; gap: 3px; flex-wrap: wrap; }
+  .topnav .lk { padding: 5px 10px; border-radius: 7px; font-size: 13px; font-weight: 550; color: var(--muted); }
+  .topnav .lk:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+  .topnav .lk.on { background: var(--accent-bg); color: var(--accent); font-weight: 620; }
+  .page { padding-top: 40px; }
+  .hero h1 { font-size: 34px; font-weight: 680; letter-spacing: -.025em; margin: 0 0 10px; line-height: 1.15; }
+  .hero .lede { font-size: 16px; color: var(--muted); max-width: 620px; line-height: 1.55; margin: 0 0 22px; }
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 30px 0 0; }
+  .fstep { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 15px; background: var(--surface); }
+  .fstep .n { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 700; }
+  .fstep .t { font-weight: 620; margin: 5px 0 3px; font-size: 13.5px; }
+  .fstep .d { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 14px; }
+  .shot {
+    border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+    padding: 15px 16px; color: inherit; display: block; transition: border-color .12s, transform .12s;
+  }
+  .shot:hover { text-decoration: none; border-color: var(--border-2); transform: translateY(-1px); }
+  .shot .n { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+  .shot .t { font-weight: 630; font-size: 14.5px; margin: 4px 0 4px; letter-spacing: -.01em; }
+  .shot .d { color: var(--muted); font-size: 12.6px; line-height: 1.45; }
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 760px) {
+    .flow, .rules { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+<div class="mockbar">
+  <div class="row" style="gap:10px">
+    <span class="tag">BUILD THIS</span>
+    <span>Data Sense — Agent Builder Capstone. Everything in red is a note to you, not part of the design.</span>
+  </div>
+  <div class="row" style="gap:14px">
+    <a href="brief.html">Problem statement</a>
+    <a href="https://github.com/fnusatvik07/agent-platform-capstone">GitHub</a>
+  </div>
+</div>
+
+<div class="topnav">
+  <a class="brand" href="index.html" style="padding:0"><span class="mark">F</span>Agent Platform Capstone</a>
+  <div class="links">
+    <a class="lk" href="brief.html">Problem statement</a>
+    <a class="lk on" href="index.html">The UI to build</a>
+    <a class="lk" href="screens/build.html">Build flow</a>
+    <a class="lk" href="deck/">Slides</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="row" style="gap:9px; margin-bottom:18px">
+      <span style="width:26px;height:26px;border-radius:7px;background:var(--ink);color:#fdfdfc;
+             display:grid;place-items:center;font-size:13px;font-weight:700">F</span>
+      <span style="font-weight:650; font-size:16px; letter-spacing:-.01em">Forge</span>
+    </div>
+
+    <h1>Build the thing that builds agents.</h1>
+    <p class="lede">
+      A person types what they want. Your platform finds the tools, checks they have access, builds
+      the agent and deploys it. They test it in a chat window, and when it works they publish it so
+      other teams can use it too — after an admin has said yes.
+    </p>
+    <div class="row wrap">
+      <a class="btn primary" href="screens/build.html">See the build flow →</a>
+      <a class="btn" href="brief.html">Read the problem statement</a>
+      <a class="btn" href="deck/">Slides</a>
+    </div>
+  </div>
+
+  <div class="section-title">The flow, end to end</div>
+  <div class="flow">
+    <div class="fstep"><div class="n">01</div><div class="t">Register a server</div>
+      <div class="d">Paste in an MCP server. The platform connects and asks it what it can do.</div></div>
+    <div class="fstep"><div class="n">02</div><div class="t">Connect once</div>
+      <div class="d">Add your token. Encrypted immediately, reused by every agent you build.</div></div>
+    <div class="fstep"><div class="n">03</div><div class="t">Describe an agent</div>
+      <div class="d">Chat. It suggests servers, you pick, it stops if a credential is missing.</div></div>
+    <div class="fstep"><div class="n">04</div><div class="t">Test it</div>
+      <div class="d">A card in My Agents. Open it, chat with it, approve the risky steps.</div></div>
+    <div class="fstep"><div class="n">05</div><div class="t">Publish it</div>
+      <div class="d">Goes to an admin, not straight to the marketplace. Approval can wait days.</div></div>
+    <div class="fstep"><div class="n">06</div><div class="t">Someone installs it</div>
+      <div class="d">Another company adds it to their workspace with their own credentials.</div></div>
+  </div>
+
+  <div class="section-title">Every screen</div>
+  <div class="shots">
+    <a class="shot" href="screens/signin.html">
+      <div class="n">01</div><div class="t">Sign in</div>
+      <div class="d">Email and password. Decides which company you see and whether you are an admin.</div>
+    </a>
+    <a class="shot" href="screens/registry.html">
+      <div class="n">02</div><div class="t">MCP Registry</div>
+      <div class="d">Register a server, and the platform introspects it. Every tool marked read, write or destructive.</div>
+    </a>
+    <a class="shot" href="screens/connections.html">
+      <div class="n">03</div><div class="t">Connections</div>
+      <div class="d">Your credentials. Encrypted, never returned, never in an agent's configuration.</div>
+    </a>
+    <a class="shot" href="screens/build.html">
+      <div class="n">04</div><div class="t">Build &nbsp;<span class="badge accent">start here</span></div>
+      <div class="d">The heart of it. Four steps, two places where the graph stops and asks you something.</div>
+    </a>
+    <a class="shot" href="screens/my-agents.html">
+      <div class="n">05</div><div class="t">My Agents</div>
+      <div class="d">Your agents as cards. Nobody else can see this page's contents.</div>
+    </a>
+    <a class="shot" href="screens/agent.html?id=a1">
+      <div class="n">06</div><div class="t">Agent — Overview</div>
+      <div class="d">The graph drawn from its configuration, its tools, and why it scores what it scores.</div>
+    </a>
+    <a class="shot" href="screens/agent.html?id=a1&tab=playground">
+      <div class="n">07</div><div class="t">Agent — Playground</div>
+      <div class="d">Chat with it. Watch the coordinator hand off. Approve before it posts anything.</div>
+    </a>
+    <a class="shot" href="screens/agent.html?id=a1&tab=api">
+      <div class="n">08</div><div class="t">Agent — API</div>
+      <div class="d">Its endpoint, and a Postman collection you can actually download and run.</div>
+    </a>
+    <a class="shot" href="screens/agent.html?id=a1&tab=settings">
+      <div class="n">09</div><div class="t">Agent — Publish</div>
+      <div class="d">The score gate. Below a B, the publish button does not work.</div>
+    </a>
+    <a class="shot" href="screens/review.html">
+      <div class="n">10</div><div class="t">Admin Review</div>
+      <div class="d">A run that stopped and has been waiting three days for a person to answer.</div>
+    </a>
+    <a class="shot" href="screens/marketplace.html">
+      <div class="n">11</div><div class="t">Marketplace</div>
+      <div class="d">The one place data crosses between companies. Which is why a human guards it.</div>
+    </a>
+    <a class="shot" href="screens/marketplace.html?id=m1">
+      <div class="n">12</div><div class="t">Add to my workspace</div>
+      <div class="d">Install it, supply your own credentials, get your own copy.</div>
+    </a>
+  </div>
+
+  <div class="section-title">The rules that make it real</div>
+  <div class="rules">
+    <div class="card">
+      <div style="font-weight:620; margin-bottom:5px">An agent is configuration, not code</div>
+      <div class="muted" style="font-size:12.8px">Your platform writes a document, not Python.
+      Everything good here — versioning, safety, publishing to someone else's workspace — comes from that.</div>
+    </div>
+    <div class="card">
+      <div style="font-weight:620; margin-bottom:5px">One person cannot see another's things</div>
+      <div class="muted" style="font-size:12.8px">Make it structurally impossible, not a filter you
+      have to remember. We will delete your application-level check and try again.</div>
+    </div>
+    <div class="card">
+      <div style="font-weight:620; margin-bottom:5px">Credentials go in once and vanish</div>
+      <div class="muted" style="font-size:12.8px">Encrypted, never in a config, never in a prompt or
+      a log. We will search everything you stored for the token we gave you.</div>
+    </div>
+    <div class="card">
+      <div style="font-weight:620; margin-bottom:5px">Risky actions ask first</div>
+      <div class="muted" style="font-size:12.8px">Enforced by the platform, not left to the agent's
+      instructions. And publishing strips everything internal to the company that built it.</div>
+    </div>
+  </div>
+
+  <div class="req" style="margin-top:26px">
+    <div class="rh">How to use these mockups</div>
+    <b>Match the flow, not the pixels.</b> These are pictures of what the finished product does, not
+    a design system, and there is no starter code behind them. Build it in whatever framework you
+    like — the nine checks you are graded against are about behaviour, not styling.
+    <div style="margin-top:9px">
+      Every screen carries a red panel listing what you must actually build on it.
+      <a href="brief.html">Read the full problem statement →</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

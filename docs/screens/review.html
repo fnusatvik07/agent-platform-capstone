@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Review — Forge</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+  .two { display: grid; grid-template-columns: 1fr 320px; gap: 26px; align-items: start; }
+  @media (max-width: 980px) { .two { grid-template-columns: 1fr; } }
+  .qitem {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); margin-bottom: 12px;
+  }
+  .qitem.sel { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="mockbar" id="mockbar"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main" id="main"></div>
+</div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+Forge.shell("review", { org: "Forge Platform", role: "admin", build: "Publishing parks a running graph here until a person answers. It may wait days." });
+
+const s = DATA.submissions[0];
+
+document.getElementById("main").innerHTML =
+  Forge.topbar(
+    "Admin Review",
+    "Nothing reaches the marketplace without a person approving it.",
+    `<span class="badge warn">${DATA.submissions.length} waiting</span>`
+  ) +
+  `<div class="content">
+    <div class="two">
+      <div>
+        <div class="section-title" style="margin-top:0">Queue</div>
+        ${DATA.submissions.map((q, i) => `
+          <div class="qitem ${i === 0 ? "sel" : ""}">
+            <div style="flex:1">
+              <div class="between" style="margin-bottom:4px">
+                <b style="font-size:14px">${q.agent}</b>
+                <div class="scores">
+                  <span class="score">Score <b>${q.score}</b></span>${Forge.gradeEl(q.grade)}
+                </div>
+              </div>
+              <div class="muted" style="font-size:12.8px; margin-bottom:7px">${q.desc}</div>
+              <div class="row wrap" style="gap:6px">
+                ${q.requires.map(r => `<span class="chip">${r}</span>`).join("")}
+                <span class="faint" style="font-size:11.5px">
+                  ${q.org} · ${q.by} · ${q.submitted}
+                </span>
+              </div>
+            </div>
+          </div>`).join("")}
+
+        <div class="section-title">Reviewing: ${s.agent}</div>
+        <div class="card">
+          <div style="font-weight:600; margin-bottom:9px">Automatic checks</div>
+          ${s.checks.map(c => `
+            <div class="check ${c.ok ? "pass" : "fail"}">
+              <span class="m">${c.ok ? "✓" : "✕"}</span><span>${c.t}</span>
+            </div>`).join("")}
+
+          <hr class="sep">
+          <div style="font-weight:600; margin-bottom:6px">What the reviewer has to judge</div>
+          <p class="muted" style="font-size:13px; margin:0 0 12px">
+            The checks above are mechanical. A human is here for the thing a script cannot decide:
+            is this agent's description honest about what it does, and should other companies be
+            running it?
+          </p>
+
+          <div class="fld" style="margin-bottom:12px">
+            <textarea rows="3" placeholder="Notes to the author…"
+              style="width:100%; padding:9px 11px; border-radius:8px; border:1px solid var(--border-2);
+                     background:var(--bg); font-family:var(--sans); font-size:13px; color:var(--text)"
+            >Drop the two tools it never calls, then resubmit.</textarea>
+          </div>
+
+          <div class="row wrap">
+            <button class="btn primary">Approve &amp; publish</button>
+            <button class="btn">Request changes</button>
+            <button class="btn">Reject</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title" style="margin-top:0">Why this screen is hard</div>
+        <div class="card">
+          <p class="muted" style="margin-top:0; font-size:13px">
+            When the author hit Publish, a run started and then <b>stopped</b> here, waiting for you.
+          </p>
+          <dl class="kv" style="grid-template-columns:88px 1fr; font-size:12.5px">
+            <dt>Waiting</dt><dd>${s.waiting}</dd>
+            <dt>State</dt><dd><span class="badge warn"><span class="dot"></span>paused</span></dd>
+            <dt>Thread</dt><dd class="mono faint" style="font-size:11.5px">thr_c93a…7e</dd>
+          </dl>
+          <hr class="sep">
+          <div class="faint" style="font-size:12.2px">
+            That run has survived two deploys and a weekend. Answering here picks it up from exactly
+            where it stopped — approving publishes, requesting changes sends it back to the author
+            with your notes.
+          </div>
+        </div>
+
+        <div class="section-title">Decisions</div>
+        ${Forge.reqPanel([
+          "A queue only admins can open.",
+          "Hitting Publish starts a run that <b>stops here</b> and waits. It may wait for days, across restarts.",
+          "Approve publishes it. Request changes sends it back to the author with notes. Both resume the same parked run.",
+          "Nothing reaches the marketplace any other way."
+        ])}
+        <div class="card" style="margin-top:12px">
+          <div class="check pass"><span class="m">✓</span><span><b>Approve</b> — goes live in the marketplace</span></div>
+          <div class="check pass"><span class="m">↩</span><span><b>Request changes</b> — back to the author, still theirs</span></div>
+          <div class="check fail"><span class="m">✕</span><span><b>Reject</b> — closed, author is told why</span></div>
+        </div>
+      </div>
+    </div>
+   </div>`;
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connections — Forge</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="mockbar" id="mockbar"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main" id="main"></div>
+</div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+Forge.shell("connections", { build: "Credentials go in once, encrypted. They must never come back out." });
+
+const badge = (s) => s === "active"
+  ? `<span class="badge ok"><span class="dot"></span>active</span>`
+  : s === "expired"
+  ? `<span class="badge warn"><span class="dot"></span>expired</span>`
+  : `<span class="badge danger"><span class="dot"></span>revoked</span>`;
+
+document.getElementById("main").innerHTML =
+  Forge.topbar(
+    "Connections",
+    "Credentials you have given the platform. Added once, reused by every agent you build.",
+    `<button class="btn primary">+ Add a connection</button>`
+  ) +
+  `<div class="content narrow">
+
+     <div class="card" style="padding:0; margin-bottom:22px">
+       <table class="t">
+         <thead><tr><th>Server</th><th>Status</th><th>Secret</th><th>Added</th><th>Last used</th><th></th></tr></thead>
+         <tbody>
+           ${DATA.connections.map(c => `
+             <tr>
+               <td><b>${c.server}</b></td>
+               <td>${badge(c.status)}</td>
+               <td class="mono faint">••••••••••••</td>
+               <td class="muted">${c.added}</td>
+               <td class="muted">${c.used}</td>
+               <td><button class="btn sm">Revoke</button></td>
+             </tr>`).join("")}
+         </tbody>
+       </table>
+     </div>
+
+     ${Forge.reqPanel([
+       "Add a credential for a server once. It is <b>encrypted immediately</b> on the way in.",
+       "The platform never gives it back — not to the user, not to an agent, not to a log.",
+       "When a tool needs it: fetch it, use it for that one call, drop it.",
+       "Revoking one must leave dependent agents <b>degraded</b>, still answering, reporting the broken tool. They must not crash."
+     ])}
+
+     <div class="section-title">Three things that must be true</div>
+     <div class="card">
+       <div class="check pass"><span class="m">✓</span>
+         <span><b>Encrypted at rest.</b> Nobody reading the database gets a usable token.</span></div>
+       <div class="check pass"><span class="m">✓</span>
+         <span><b>Never in an agent's configuration.</b> The config says
+         &ldquo;needs a Slack connection&rdquo;, never <i>which</i> one or what it contains.</span></div>
+       <div class="check pass"><span class="m">✓</span>
+         <span><b>Never in a prompt, log or saved conversation.</b> We will search everything your
+         system stored for the token we gave you.</span></div>
+     </div>
+
+     <div class="section-title">Revoking</div>
+     <div class="card">
+       <p class="muted" style="margin-top:0; font-size:13px">
+         The Jira connection above has expired. The agent that used it is now showing as
+         <span class="badge danger"><span class="dot"></span>degraded</span> — it still answers,
+         still uses its other tools, and reports the one that is broken.
+       </p>
+       <a class="btn sm" href="agent.html?id=a5">See a degraded agent →</a>
+     </div>
+   </div>`;
+</script>
+</body>
+</html>

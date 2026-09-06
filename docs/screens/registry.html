@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP Registry — Forge</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+  .srv { display: flex; flex-direction: column; gap: 9px; }
+  .srv .toolrow {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 5px 0; font-size: 12.5px; border-bottom: 1px solid var(--border);
+  }
+  .srv .toolrow:last-child { border-bottom: 0; }
+  .modal {
+    border: 1px solid var(--border-2); border-radius: 12px; background: var(--surface);
+    max-width: 420px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.09), 0 2px 6px rgba(0,0,0,.05);
+  }
+  .modal .mh { padding: 14px 16px 0; }
+  .modal .mb { padding: 12px 16px 16px; }
+  .fld { margin-bottom: 12px; }
+  .fld label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .fld input, .fld select {
+    width: 100%; padding: 7px 10px; border-radius: 7px;
+    border: 1px solid var(--border-2); background: var(--bg);
+    font-family: var(--sans); font-size: 13px; color: var(--text);
+  }
+  .fld input.mono { font-family: var(--mono); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="mockbar" id="mockbar"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main" id="main"></div>
+</div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+Forge.shell("registry", { build: "Register a server and the platform must connect to it and read its tools itself." });
+
+const serverCard = (s) => `
+  <div class="card srv">
+    <div class="between">
+      <div class="row" style="gap:8px">
+        <b style="font-size:14.5px">${s.name}</b>
+        ${s.status === "ok"
+          ? `<span class="badge ok"><span class="dot"></span>ok</span>`
+          : `<span class="badge danger"><span class="dot"></span>down</span>`}
+        ${s.scope === "tenant" ? `<span class="badge">private</span>` : ""}
+      </div>
+      ${s.connected
+        ? `<span class="badge ok">connected</span>`
+        : `<button class="btn primary sm">Connect</button>`}
+    </div>
+
+    <div class="muted" style="font-size:12.8px">${s.desc}</div>
+
+    <div class="row wrap" style="gap:6px">
+      <span class="chip">${s.transport}</span>
+      <span class="chip">${s.auth}</span>
+      <span class="chip">${s.tools.length} tools</span>
+    </div>
+
+    <hr class="sep" style="margin:4px 0">
+    <div>
+      ${s.tools.slice(0, 4).map(t => `
+        <div class="toolrow">
+          <span class="mono">${t.name}</span>
+          ${Forge.riskBadge(t.risk)}
+        </div>`).join("")}
+      ${s.tools.length > 4 ? `<div class="faint" style="font-size:12px; padding-top:6px">
+        + ${s.tools.length - 4} more</div>` : ""}
+    </div>
+
+    <div class="faint" style="font-size:11.5px">checked ${s.checked}</div>
+  </div>`;
+
+document.getElementById("main").innerHTML =
+  Forge.topbar(
+    "MCP Registry",
+    "Tool servers your agents can use. Register one, connect once, reuse everywhere.",
+    `<button class="btn primary">+ Register a server</button>`
+  ) +
+  `<div class="content">
+
+     ${Forge.reqPanel([
+       "A form to register an MCP server: name, transport, endpoint, auth type.",
+       "On save, <b>your platform connects to the server and asks it what tools it has</b>. Nobody types tool names in by hand — if they could, the registry would be wrong the moment a server changed.",
+       "Each tool is stored as <b>read</b>, <b>write</b> or <b>destructive</b>. That marking is what forces an approval step later.",
+       "A scheduled job re-checks every server and marks the dead ones.",
+       "Servers can be shared with everyone or private to one company."
+     ])}
+
+     <div class="section-title">Shared servers</div>
+     <div class="grid">
+       ${DATA.servers.filter(s => s.scope === "global").map(serverCard).join("")}
+     </div>
+
+     <div class="section-title">Private to Northwind Labs</div>
+     <div class="grid">
+       ${DATA.servers.filter(s => s.scope === "tenant").map(serverCard).join("")}
+     </div>
+
+     <div class="section-title">Registering a server</div>
+     <div class="row wrap" style="gap:24px; align-items:flex-start">
+       <div class="modal">
+         <div class="mh">
+           <div style="font-weight:650; font-size:14.5px">Register an MCP server</div>
+           <div class="muted" style="font-size:12.5px; margin-top:2px">
+             Saved only after the platform successfully connects.
+           </div>
+         </div>
+         <div class="mb">
+           <div class="fld"><label>Name</label><input value="slack"></div>
+           <div class="fld"><label>Transport</label><select><option>http</option><option>sse</option><option>stdio</option></select></div>
+           <div class="fld"><label>Endpoint</label><input class="mono" value="https://mcp.example.com/slack"></div>
+           <div class="fld"><label>Authentication</label><select><option>oauth</option><option>api_key</option><option>none</option></select></div>
+           <div class="fld" style="margin-bottom:14px">
+             <label>Visible to</label>
+             <select><option>Just my workspace</option><option>Everyone (admin only)</option></select>
+           </div>
+           <div class="row">
+             <button class="btn primary sm">Connect &amp; save</button>
+             <button class="btn sm">Cancel</button>
+           </div>
+         </div>
+       </div>
+
+       <div style="flex:1; min-width:280px">
+         <div class="card">
+           <div style="font-weight:600; margin-bottom:8px">What happens on save</div>
+           <div class="check pass"><span class="m">1</span><span>Open a connection to the endpoint</span></div>
+           <div class="check pass"><span class="m">2</span><span>Ask it for its tool list</span></div>
+           <div class="check pass"><span class="m">3</span><span>Mark each tool read, write or destructive</span></div>
+           <div class="check pass"><span class="m">4</span><span>Store the list; mark the server healthy</span></div>
+           <div class="check fail"><span class="m">✕</span><span class="muted">If it does not answer, nothing is saved</span></div>
+           <hr class="sep">
+           <div class="faint" style="font-size:12px">
+             A scheduled job re-checks every server and marks the dead ones. Agents that depend on a
+             dead server show as degraded.
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>`;
+</script>
+</body>
+</html>

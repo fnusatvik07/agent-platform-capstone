@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Agents — Forge</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="mockbar" id="mockbar"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main" id="main"></div>
+</div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+Forge.shell("my-agents", { build: "Every agent is a card. Clicking a card opens that agent's page." });
+
+const mine = DATA.agents;
+
+document.getElementById("main").innerHTML =
+  Forge.topbar(
+    "My Agents",
+    "Only you can see these. Nothing here is visible to another workspace.",
+    `<a class="btn primary" href="build.html">✦ Build an agent</a>`
+  ) +
+  `<div class="content">
+     <div class="row wrap" style="gap:8px; margin-bottom:18px">
+       <span class="badge accent">${mine.length} agents</span>
+       <span class="badge">${mine.filter(a=>a.status==="live").length} live</span>
+       <span class="badge warn">1 in review</span>
+       <span class="badge danger">1 degraded</span>
+     </div>
+
+     <div class="grid">${mine.map(Forge.agentCard).join("")}</div>
+
+     ${Forge.reqPanel([
+       "A <b>grid of cards</b>, one per agent. The same card shape is reused in the Marketplace and the admin review queue.",
+       "Each card shows: name, status, description, the servers it uses, both scores, and when it last ran.",
+       "Clicking any card opens that agent's page.",
+       "This page shows <b>only your agents</b>. Another user signing in must never see one of these, even by guessing a URL."
+     ])}
+   </div>`;
+</script>
+</body>
+</html>

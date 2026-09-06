@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketplace — Forge</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+  .two { display: grid; grid-template-columns: 1fr 320px; gap: 26px; align-items: start; }
+  @media (max-width: 980px) { .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="mockbar" id="mockbar"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main" id="main"></div>
+</div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+Forge.shell("marketplace", { build: "The only place data crosses between companies — which is why a human guards it." });
+
+const id = Forge.param("id", null);
+const m  = id && DATA.marketplace.find(x => x.id === id);
+const main = document.getElementById("main");
+
+if (!m) {
+  main.innerHTML =
+    Forge.topbar(
+      "Marketplace",
+      "Agents that other workspaces published and an admin approved. Install one and it becomes yours.",
+      `<input class="btn" style="width:220px; cursor:text" placeholder="Search agents…">`
+    ) +
+    `<div class="content">
+       ${Forge.reqPanel([
+         "Every listing here was approved by an admin. Nothing reaches this page automatically.",
+         "A listing carries the agent's <b>design</b> — what it does and what kinds of access it needs. Never credentials, never anything internal to the company that built it.",
+         "<b>Add to my workspace</b> copies the configuration into the installer's own workspace. They supply their own credentials.",
+         "The publisher never sees the installer's runs, and the installer never touches the original."
+       ])}
+       <div class="grid">${DATA.marketplace.map(Forge.listingCard).join("")}</div>
+     </div>`;
+} else {
+  main.innerHTML =
+    Forge.topbar(
+      m.name,
+      `Published by ${m.org} · ${m.installs} installs`,
+      `<a class="btn" href="marketplace.html">← Marketplace</a>
+       <button class="btn primary">Add to my workspace</button>`
+    ) +
+    `<div class="content">
+      <div class="two">
+        <div>
+          <div class="card">
+            <div style="font-size:13.5px">${m.desc}</div>
+            <hr class="sep">
+            <dl class="kv" style="grid-template-columns:120px 1fr; font-size:12.8px">
+              <dt>Shape</dt><dd>${m.topology === "supervisor"
+                ? `coordinator + specialists <span class="badge accent">multi-agent</span>`
+                : "single agent"}</dd>
+              <dt>Publisher</dt><dd>${m.org}</dd>
+              <dt>Score</dt><dd class="row" style="gap:7px"><b>${m.score}</b> ${Forge.gradeEl(m.grade)}</dd>
+              <dt>Reviewed</dt><dd><span class="badge ok"><span class="dot"></span>approved by an admin</span></dd>
+            </dl>
+          </div>
+
+          <div class="section-title">What it will need from you</div>
+          <div class="card">
+            <p class="muted" style="margin-top:0; font-size:13px">
+              You supply your own credentials. The publisher's are not included and never were.
+            </p>
+            ${m.requires.map(r => {
+              const have = DATA.connections.some(c => c.server === r && c.status === "active");
+              return `<div class="check ${have ? "pass" : "fail"}">
+                <span class="m">${have ? "✓" : "＋"}</span>
+                <span><b>${r}</b> — ${have
+                  ? `you are already connected`
+                  : `<span class="muted">you will be asked to connect</span>`}</span>
+              </div>`;
+            }).join("")}
+            <hr class="sep">
+            <button class="btn primary">Add to my workspace</button>
+            <p class="faint" style="font-size:12px; margin-bottom:0">
+              You get your own copy in My Agents. Editing it changes nothing for anyone else, and the
+              publisher never sees your runs.
+            </p>
+          </div>
+
+          <div class="section-title">What it can do</div>
+          <div class="card" style="padding:0">
+            <table class="t">
+              <thead><tr><th>Tool</th><th>Risk</th><th>Before it runs</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">slack.read_channel</td><td>${Forge.riskBadge("read")}</td>
+                    <td class="muted">runs automatically</td></tr>
+                <tr><td class="mono">jira.search_issues</td><td>${Forge.riskBadge("read")}</td>
+                    <td class="muted">runs automatically</td></tr>
+                <tr><td class="mono">jira.create_issue</td><td>${Forge.riskBadge("write")}</td>
+                    <td><span class="badge warn">asks a human</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-top:0">What is not here</div>
+          <div class="card">
+            <div class="check fail"><span class="m">✕</span><span>Who built it, beyond an org name</span></div>
+            <div class="check fail"><span class="m">✕</span><span>Any credential or token</span></div>
+            <div class="check fail"><span class="m">✕</span><span>Internal URLs or system names</span></div>
+            <div class="check fail"><span class="m">✕</span><span>Their runs, threads or data</span></div>
+            <hr class="sep">
+            <div class="faint" style="font-size:12px">
+              Stripping this out is a required step, and it is tested: you will be handed an agent
+              with confidential material planted in it.
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>`;
+}
+</script>
+</body>
+</html>

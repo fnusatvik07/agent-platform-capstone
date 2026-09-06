@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Issue Digest — Forge</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+  .two { display: grid; grid-template-columns: 1fr 300px; gap: 26px; align-items: start; }
+  @media (max-width: 980px) { .two { grid-template-columns: 1fr; } }
+  .approval {
+    border: 1px solid var(--warn); border-radius: 10px; overflow: hidden; max-width: 620px;
+  }
+  .approval .ah {
+    background: var(--warn-bg); color: var(--warn); padding: 8px 14px;
+    font-size: 11.5px; font-weight: 650; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .approval .ab { padding: 13px 14px; background: var(--surface); }
+</style>
+</head>
+<body>
+<div class="mockbar" id="mockbar"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main" id="main"></div>
+</div>
+
+<script src="../assets/data.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+Forge.shell("my-agents", { build: "One agent, in full. Test it here, then publish it." });
+
+const REQ = {
+  overview: ["Show the agent's <b>graph, drawn from its configuration</b> — not a hand-maintained picture.",
+             "List every tool with its risk level and whether it asks before running.",
+             "Show both scores, and <b>show the checks behind them</b>. A student must be able to say why the number is what it is."],
+  playground: ["A chat window where the user tests the agent.",
+               "When a risky tool is reached, the run <b>pauses and shows Approve / Reject in the chat</b>. Nothing happens until someone clicks.",
+               "This pause must survive a restart — the approval is still waiting when the server comes back.",
+               "Thumbs up/down feeds the score."],
+  connections: ["Show which of the user's connections this agent uses, and whether each is healthy.",
+                "The agent's configuration must only say <b>&ldquo;needs a Slack connection&rdquo;</b> — never which one, never the secret.",
+                "Revoking a connection leaves the agent <b>degraded</b>, not crashed."],
+  runs: ["A run history with status, latency, cost and outcome.",
+         "These numbers feed the agent score."],
+  api: ["Every agent gets a <b>callable URL</b>.",
+        "A <b>Download Postman Collection</b> button. Download it, hit Send, get a real response.",
+        "A token from another company calling this URL gets <b>404, not 403</b> — a 403 confirms the agent exists."],
+  settings: ["Publishing is <b>blocked</b> below the score threshold, and the button says why.",
+             "A score that blocks nothing is decoration.",
+             "Publishing strips out everything internal to the company before it leaves."]
+};
+
+const a   = DATA.agents.find(x => x.id === Forge.param("id", "a1")) || DATA.agents[0];
+const tab = Forge.param("tab", "overview");
+const TABS = [
+  ["overview",    "Overview"],
+  ["playground",  "Playground"],
+  ["connections", "Connections"],
+  ["runs",        "Runs"],
+  ["api",         "API"],
+  ["settings",    "Settings"]
+];
+
+/* ------------------------------------------------------------------ graph */
+const graphSVG = `
+<div class="graph">
+  <svg viewBox="0 0 660 250" role="img" aria-label="Agent graph">
+    <defs>
+      <marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="var(--border-2)"/>
+      </marker>
+    </defs>
+
+    <path class="gedge" d="M108,125 H160"                     marker-end="url(#ar)"/>
+    <path class="gedge" d="M272,113 C310,113 310,68 344,68"   marker-end="url(#ar)"/>
+    <path class="gedge" d="M272,137 C310,137 310,182 344,182" marker-end="url(#ar)"/>
+    <path class="gedge" d="M456,68  H512"                     marker-end="url(#ar)"/>
+    <path class="gedge" d="M456,182 H512"                     marker-end="url(#ar)"/>
+    <path class="gedge" d="M400,92  V158"                     marker-end="url(#ar)" stroke-dasharray="3 3"/>
+    <text class="gedgel" x="418" y="128">hands off</text>
+
+    <rect class="gnode" x="34"  y="107" width="74"  height="36" rx="8"/>
+    <text class="gtext" x="71"  y="129">message</text>
+
+    <rect class="gnode accent" x="160" y="103" width="112" height="44" rx="9"/>
+    <text class="gtext" x="216" y="121">supervisor</text>
+    <text class="gsub"  x="216" y="135">routes the work</text>
+
+    <rect class="gnode" x="344" y="46"  width="112" height="44" rx="9"/>
+    <text class="gtext" x="400" y="64">triager</text>
+    <text class="gsub"  x="400" y="78">P0 / P1 / P2</text>
+
+    <rect class="gnode" x="344" y="160" width="112" height="44" rx="9"/>
+    <text class="gtext" x="400" y="178">reporter</text>
+    <text class="gsub"  x="400" y="192">writes digest</text>
+
+    <rect class="gnode" x="512" y="48"  width="120" height="40" rx="8"/>
+    <text class="gtext" x="572" y="65">github</text>
+    <text class="gsub"  x="572" y="78">2 read tools</text>
+
+    <rect class="gnode warnn" x="512" y="162" width="120" height="40" rx="8"/>
+    <text class="gtext" x="572" y="179">slack</text>
+    <text class="gsub"  x="572" y="192">post_message · asks</text>
+  </svg>
+</div>`;
+
+/* ------------------------------------------------------------------ tabs */
+const T = {};
+
+T.overview = `
+<div class="two">
+  <div>
+    <div class="section-title">Agent graph</div>
+    ${graphSVG}
+    <p class="muted" style="font-size:12.5px; margin-top:10px">
+      Drawn from the agent's configuration, not hand-maintained. Change the config and the picture changes.
+    </p>
+
+    <div class="section-title">Instructions</div>
+    <div class="card muted" style="font-size:13px">${a.instructions}</div>
+
+    <div class="section-title">Tools</div>
+    <div class="card" style="padding:0">
+      <table class="t">
+        <thead><tr><th>Tool</th><th>Risk</th><th>Before it runs</th></tr></thead>
+        <tbody>
+          ${a.tools.map(t => `
+            <tr>
+              <td class="mono">${t.server}.${t.tool}</td>
+              <td>${Forge.riskBadge(t.risk)}</td>
+              <td>${t.approval === "ask"
+                    ? `<span class="badge warn">asks a human</span>`
+                    : `<span class="muted">runs automatically</span>`}</td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:12.5px; margin-top:9px">
+      Anything that writes is forced to ask. The platform enforces that &mdash; it is not left to
+      the agent's instructions.
+    </p>
+  </div>
+
+  <div>
+    <div class="section-title" style="margin-top:0">Scores</div>
+    <div class="card">
+      <div class="between" style="margin-bottom:12px">
+        <div>
+          <div class="faint" style="font-size:11.5px">Does it work?</div>
+          <div style="font-size:26px; font-weight:700; line-height:1.1">${a.score}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="faint" style="font-size:11.5px">Is it safe?</div>
+          <div style="font-size:26px; font-weight:700; line-height:1.1">${a.grade}</div>
+        </div>
+      </div>
+      <hr class="sep" style="margin:10px 0">
+      <div class="check pass"><span class="m">✓</span><span>Write tools require approval</span></div>
+      <div class="check pass"><span class="m">✓</span><span>All servers healthy and pinned</span></div>
+      <div class="check pass"><span class="m">✓</span><span>No credentials in config or traces</span></div>
+      <div class="check fail"><span class="m">✕</span><span>1 granted tool never used in 41 runs</span></div>
+      <div class="check pass"><span class="m">✓</span><span>Run 41 times</span></div>
+      <hr class="sep" style="margin:10px 0">
+      <div class="faint" style="font-size:12px">
+        4 of 5 → <b>B</b>. Every number here traces to a check you can point at. No model guesses a score.
+      </div>
+    </div>
+
+    <div class="section-title">Details</div>
+    <div class="card">
+      <dl class="kv" style="grid-template-columns:96px 1fr; font-size:12.5px">
+        <dt>Model</dt><dd class="mono">${a.model}</dd>
+        <dt>Shape</dt><dd>${a.topology === "supervisor" ? "coordinator + 2 specialists" : "single agent"}</dd>
+        <dt>Schedule</dt><dd>${a.schedule || "—"}</dd>
+        <dt>Runs</dt><dd>${a.runs} · last ${a.lastRun}</dd>
+        <dt>Visible to</dt><dd>you only</dd>
+      </dl>
+    </div>
+  </div>
+</div>`;
+
+T.playground = `
+<div class="two">
+  <div>
+    <div class="chat">
+      <div class="msg user"><div class="body">Run today's digest for the platform repo.</div></div>
+
+      <div class="msg bot">
+        <div class="who-av">F</div>
+        <div class="body">
+          <p><span class="badge">supervisor</span> → <span class="badge">triager</span></p>
+          <p class="muted" style="font-size:12.5px">
+            Called <code>github.list_issues</code> — 23 open issues.<br>
+            Called <code>github.get_issue</code> ×6 for the unlabelled ones.
+          </p>
+          <p>Classified: <b>3 P0</b>, 11 P1, 9 P2. The P0s are all in the auth service.</p>
+        </div>
+      </div>
+
+      <div class="msg bot">
+        <div class="who-av">F</div>
+        <div class="body">
+          <p><span class="badge">supervisor</span> → <span class="badge">reporter</span></p>
+          <p>Digest drafted. It wants to post to <code>#eng-standup</code>.</p>
+        </div>
+      </div>
+
+      <div class="msg bot">
+        <div class="who-av">F</div>
+        <div class="body" style="width:100%">
+          <div class="approval">
+            <div class="ah">Waiting for approval · slack.post_message</div>
+            <div class="ab">
+              <div class="faint" style="font-size:11.5px; margin-bottom:6px">channel: #eng-standup</div>
+              <pre style="font-size:12px">*Morning digest — 23 open*
+
+🔴 P0 (3) — all auth-service
+  #1841 token refresh loops on expiry
+  #1839 SSO callback drops the state param
+  #1836 rate limiter counts retries twice
+
+🟠 P1 (11) · 🟡 P2 (9)</pre>
+              <div class="row" style="margin-top:12px">
+                <button class="btn primary sm">Approve &amp; post</button>
+                <button class="btn sm">Reject</button>
+                <span class="faint" style="font-size:12px">Nothing is sent until you choose.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <input placeholder="Message this agent…">
+      <button class="btn primary sm">Send</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title" style="margin-top:0">This run</div>
+    <div class="card">
+      <dl class="kv" style="grid-template-columns:92px 1fr; font-size:12.5px">
+        <dt>Status</dt><dd><span class="badge warn"><span class="dot"></span>awaiting approval</span></dd>
+        <dt>Tool calls</dt><dd>7</dd>
+        <dt>Elapsed</dt><dd>5.2s</dd>
+        <dt>Cost</dt><dd>$0.019</dd>
+        <dt>Thread</dt><dd class="mono faint" style="font-size:11.5px">thr_8f21…c4</dd>
+      </dl>
+      <hr class="sep">
+      <div class="row"><button class="btn sm">👍</button><button class="btn sm">👎</button>
+        <span class="faint" style="font-size:12px">feeds the score</span></div>
+    </div>
+
+    <div class="note" style="margin-top:16px; font-size:12.2px">
+      This run is parked on an interrupt. Restart the server and come back — the approval is still
+      here, and answering it carries on from the same place.
+    </div>
+  </div>
+</div>`;
+
+T.connections = `
+<div class="card" style="padding:0; max-width:820px">
+  <table class="t">
+    <thead><tr><th>Server</th><th>Status</th><th>Used by this agent</th><th>Last used</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>github</b> <span class="faint mono" style="font-size:11.5px">api_key</span></td>
+        <td><span class="badge ok"><span class="dot"></span>active</span></td>
+        <td class="mono" style="font-size:12px">list_issues, get_issue</td>
+        <td class="muted">2h ago</td>
+        <td><button class="btn sm">Revoke</button></td>
+      </tr>
+      <tr>
+        <td><b>slack</b> <span class="faint mono" style="font-size:11.5px">oauth</span></td>
+        <td><span class="badge ok"><span class="dot"></span>active</span></td>
+        <td class="mono" style="font-size:12px">post_message</td>
+        <td class="muted">2h ago</td>
+        <td><button class="btn sm">Revoke</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="note" style="margin-top:18px; max-width:820px">
+  These are <b>your</b> credentials, not the agent's. The agent's configuration only says
+  &ldquo;this needs a Slack connection&rdquo;. That is why it can be published to the marketplace
+  without leaking anything — whoever installs it plugs in their own.
+</div>
+<div class="note warn" style="margin-top:12px; max-width:820px">
+  Revoke one and this agent goes <b>degraded</b>: it keeps working for everything else and reports
+  the broken tool. It must not crash.
+</div>`;
+
+T.runs = `
+<div class="card" style="padding:0; max-width:920px">
+  <table class="t">
+    <thead><tr><th>When</th><th>Trigger</th><th>Status</th><th>Latency</th><th>Cost</th><th>Result</th></tr></thead>
+    <tbody>
+      ${DATA.runs.map(r => `
+        <tr>
+          <td class="muted">${r.when}</td>
+          <td><span class="chip">${r.trigger}</span></td>
+          <td>${r.status === "ok"   ? `<span class="badge ok"><span class="dot"></span>ok</span>`
+              : r.status === "wait" ? `<span class="badge warn"><span class="dot"></span>approval</span>`
+              :                       `<span class="badge danger"><span class="dot"></span>error</span>`}</td>
+          <td class="mono" style="font-size:12px">${(r.ms/1000).toFixed(1)}s</td>
+          <td class="mono" style="font-size:12px">$${r.usd.toFixed(3)}</td>
+          <td class="muted">${r.out}</td>
+        </tr>`).join("")}
+    </tbody>
+  </table>
+</div>`;
+
+T.api = `
+<div style="max-width:820px">
+  <div class="section-title" style="margin-top:0">Endpoint</div>
+  <div class="card">
+    <div class="between" style="margin-bottom:10px">
+      <code>POST /v1/agents/${a.id}/invoke</code>
+      <button class="btn primary sm" id="dl">⤓ Download Postman collection</button>
+    </div>
+    <pre>curl -X POST https://forge.local/v1/agents/${a.id}/invoke \\
+  -H "Authorization: Bearer $FORGE_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"input": "Run today'"'"'s digest for the platform repo"}'</pre>
+  </div>
+
+  <div class="section-title">Also available</div>
+  <div class="card" style="padding:0">
+    <table class="t">
+      <tbody>
+        <tr><td class="mono">POST /v1/agents/${a.id}/stream</td><td class="muted">Same, streamed over SSE</td></tr>
+        <tr><td class="mono">POST /v1/agents/${a.id}/resume</td><td class="muted">Answer a pending approval</td></tr>
+        <tr><td class="mono">GET  /v1/agents/${a.id}/postman</td><td class="muted">This collection, as JSON</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note" style="margin-top:18px">
+    A token belonging to another workspace that calls this URL gets <b>404</b>, not 403.
+    A 403 would confirm the agent exists.
+  </div>
+  <p class="muted" style="font-size:12.5px; margin-top:12px">
+    The download button is live in this mockup — it produces a real Postman v2.1 collection so you
+    can see the shape you are aiming for.
+  </p>
+</div>`;
+
+T.settings = `
+<div style="max-width:760px">
+  <div class="section-title" style="margin-top:0">Sharing</div>
+  <div class="card">
+    <div class="between">
+      <div>
+        <div style="font-weight:600">Private to you</div>
+        <div class="muted" style="font-size:12.5px">Nobody else in Northwind Labs can see this agent,
+        and no other workspace can reach it at all.</div>
+      </div>
+      <button class="btn sm">Change</button>
+    </div>
+  </div>
+
+  <div class="section-title">Publish to the Marketplace</div>
+  <div class="card">
+    <p class="muted" style="margin-top:0; font-size:13px">
+      Publishing sends the agent's design — what it does and what kinds of access it needs — to an
+      admin for review. Your credentials and anything internal to your workspace are stripped first.
+    </p>
+    <div class="check pass"><span class="m">✓</span><span>Score 82 &nbsp;<span class="faint">(needs 70)</span></span></div>
+    <div class="check pass"><span class="m">✓</span><span>Governance B &nbsp;<span class="faint">(needs B)</span></span></div>
+    <div class="check pass"><span class="m">✓</span><span>Write tools behind approval</span></div>
+    <hr class="sep">
+    <button class="btn primary">Publish to Marketplace</button>
+    <p class="faint" style="font-size:12px; margin-bottom:0">
+      An admin reviews it before anyone else can see it.
+    </p>
+  </div>
+
+  <div class="section-title">Blocked example</div>
+  <div class="card">
+    <div class="check fail"><span class="m">✕</span><span>Score 54 &nbsp;<span class="faint">(needs 70)</span></span></div>
+    <div class="check fail"><span class="m">✕</span><span>Governance C &nbsp;<span class="faint">(needs B)</span></span></div>
+    <hr class="sep">
+    <button class="btn primary disabled">Publish to Marketplace</button>
+    <p class="faint" style="font-size:12px; margin-bottom:0">
+      Test it more, and give it only the tools it actually uses. A score that blocks nothing is decoration.
+    </p>
+  </div>
+</div>`;
+
+/* ------------------------------------------------------------------ render */
+document.getElementById("main").innerHTML =
+  Forge.topbar(
+    `<span class="row" style="gap:9px">${a.name} ${Forge.statusBadge(a.status)}</span>`,
+    a.desc,
+    `<a class="btn" href="my-agents.html">← My Agents</a>
+     <a class="btn primary" href="agent.html?id=${a.id}&tab=playground">Open playground</a>`
+  ) +
+  `<div class="tabs">
+     ${TABS.map(([k, l]) =>
+       `<a class="tab ${k === tab ? "active" : ""}" href="agent.html?id=${a.id}&tab=${k}">${l}</a>`
+     ).join("")}
+   </div>
+   <div class="content">
+     ${Forge.reqPanel(REQ[tab] || REQ.overview)}
+     <div style="height:20px"></div>
+     ${T[tab] || T.overview}
+   </div>`;
+
+/* live Postman export, so students can see the artifact they must produce */
+const dl = document.getElementById("dl");
+if (dl) dl.onclick = () => {
+  const req = (name, path, body) => ({
+    name,
+    request: {
+      method: "POST",
+      header: [
+        { key: "Authorization", value: "Bearer {{token}}" },
+        { key: "Content-Type",  value: "application/json" }
+      ],
+      url: { raw: `{{base_url}}${path}`, host: ["{{base_url}}"], path: path.slice(1).split("/") },
+      body: { mode: "raw", raw: JSON.stringify(body, null, 2) }
+    }
+  });
+  const collection = {
+    info: {
+      name: `Forge — ${a.name}`,
+      description: a.desc,
+      schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    variable: [
+      { key: "base_url", value: "http://localhost:8000" },
+      { key: "token",    value: "PASTE_YOUR_TOKEN" }
+    ],
+    item: [
+      req("Invoke", `/v1/agents/${a.id}/invoke`, { input: "Run today's digest for the platform repo" }),
+      req("Stream", `/v1/agents/${a.id}/stream`, { input: "Run today's digest" }),
+      req("Resume approval", `/v1/agents/${a.id}/resume`,
+          { thread_id: "thr_8f21c4", decision: "approve" })
+    ]
+  };
+  const url = URL.createObjectURL(
+    new Blob([JSON.stringify(collection, null, 2)], { type: "application/json" })
+  );
+  const el = document.createElement("a");
+  el.href = url;
+  el.download = `${a.name.toLowerCase().replace(/\s+/g, "-")}.postman_collection.json`;
+  el.click();
+  URL.revokeObjectURL(url);
+};
+</script>
+</body>
+</html>
